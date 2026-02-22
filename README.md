@@ -71,26 +71,26 @@ AI-generated titles, descriptions, tags, chapters, pinned comments, and A/B/C th
 </tr>
 </table>
 
+### High Retention Cut vs. Normal Video
+
 <table>
 <tr>
+<td align="center"><strong>Studio Output</strong></td>
+<td align="center"><strong>Raw Recording</strong></td>
+</tr>
+<tr>
 <td align="center">
-
-**High Retention Cut** - [watch video](https://www.web2labs.com/assets/studio/cuts/high-retention-cut.mp4)
-
-*Dead air cut. Pacing tightened. Every second earns its place.*
-
+<img src="assets/retention-cut-sample.gif" alt="High retention cut by Studio" width="400" />
+<br/><em>Dead air cut. Pacing tightened. Every second earns its place.</em>
 </td>
 <td align="center">
-
-**Normal Video** - [watch video](https://www.web2labs.com/assets/studio/cuts/normal-cut.mp4)
-
-*Silences, filler, and rambles. Viewers leave before the good part.*
-
+<img src="assets/normal-cut-sample.gif" alt="Normal unedited video" width="400" />
+<br/><em>Silences, filler, and rambles. Viewers scroll past.</em>
 </td>
 </tr>
 </table>
 
-> [See the interactive before/after slider and more examples on web2labs.com →](https://www.web2labs.com)
+> [See the full interactive comparison on web2labs.com →](https://www.web2labs.com)
 
 ### Who is it for?
 
