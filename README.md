@@ -1,15 +1,15 @@
 <p align="center">
-  <a href="https://web2labs.com">
-    <img src="https://web2labs.com/assets/studio/logo-full.svg" alt="Web2Labs Studio" width="320" />
+  <a href="https://www.web2labs.com">
+    <img src="https://www.web2labs.com/assets/studio/logo-full.svg" alt="Web2Labs Studio" width="320" />
   </a>
 </p>
 
 <h3 align="center">AI video editing — turns videos & streams into<br/>complete YouTube videos & shorts</h3>
 
 <p align="center">
-  <a href="https://web2labs.com/openclaw"><strong>Landing Page</strong></a> · 
-  <a href="https://web2labs.com"><strong>Web App</strong></a> · 
-  <a href="https://web2labs.com/api/v1/docs"><strong>API Docs</strong></a> · 
+  <a href="https://www.web2labs.com/openclaw"><strong>Landing Page</strong></a> · 
+  <a href="https://www.web2labs.com"><strong>Web App</strong></a> · 
+  <a href="https://www.web2labs.com/api/v1/docs"><strong>API Docs</strong></a> · 
   <a href="https://github.com/web2labs/web2labs-studio-examples"><strong>Examples</strong></a>
 </p>
 
@@ -52,7 +52,45 @@ AI-generated titles, descriptions, tags, chapters, pinned comments, and A/B/C th
 </tr>
 </table>
 
-> **See it in action:** [web2labs.com](https://web2labs.com) has side-by-side comparisons of raw vs. edited output — high retention cuts vs. normal video. The difference is night and day.
+### See the difference
+
+<table>
+<tr>
+<td align="center"><strong>Studio Thumbnail</strong></td>
+<td align="center"><strong>Amateur Thumbnail</strong></td>
+</tr>
+<tr>
+<td align="center">
+<img src="https://www.web2labs.com/assets/studio/thumbnails/thumbnail_1.webp" alt="Studio-generated thumbnail" width="400" />
+<br/><em>AI-generated, brand-colored, click-worthy.</em>
+</td>
+<td align="center">
+<img src="https://www.web2labs.com/assets/studio/thumbnails/thumbnail-amateur.webp" alt="Amateur thumbnail" width="400" />
+<br/><em>Generic frame grab. Viewers scroll right past.</em>
+</td>
+</tr>
+</table>
+
+<table>
+<tr>
+<td align="center">
+
+**High Retention Cut** — [watch video](https://www.web2labs.com/assets/studio/cuts/high-retention-cut.mp4)
+
+*Dead air cut. Pacing tightened. Every second earns its place.*
+
+</td>
+<td align="center">
+
+**Normal Video** — [watch video](https://www.web2labs.com/assets/studio/cuts/normal-cut.mp4)
+
+*Silences, filler, and rambles. Viewers leave before the good part.*
+
+</td>
+</tr>
+</table>
+
+> [See the interactive before/after slider and more examples on web2labs.com →](https://www.web2labs.com)
 
 ### Who is it for?
 
@@ -221,7 +259,7 @@ Every video costs **1 API credit** (or 2 for rush priority). Premium features li
 
 **Subscribers** (Starter €20/mo, Creator €50/mo, Legend €800 lifetime) can use their monthly project allocation through the skill — as low as €0.50/video on Creator tier.
 
-[View full pricing →](https://web2labs.com/pricing)
+[View full pricing →](https://www.web2labs.com/pricing)
 
 ---
 
@@ -232,7 +270,7 @@ Every user gets a unique referral code. Share it and both you and your friend ge
 ```
 You:   "What's my referral code?"
 Agent: Your code is STUDIO-K7M3
-       Share: https://web2labs.com/ref/STUDIO-K7M3
+       Share: https://www.web2labs.com/ref/STUDIO-K7M3
        
        Stats: 3 referrals, 15 credits earned, 7 slots remaining
 ```
@@ -301,7 +339,7 @@ export WEB2LABS_SPEND_POLICY=explicit
 ## Requirements
 
 - **Node.js 18+**
-- **Web2Labs account** — [sign up free](https://web2labs.com/openclaw) (2 free credits, no card)
+- **Web2Labs account** — [sign up free](https://www.web2labs.com/openclaw) (2 free credits, no card)
 - **Optional:** `yt-dlp` for URL-based workflows (`brew install yt-dlp`)
 
 ---
@@ -313,7 +351,7 @@ The skill reads from environment variables or OpenClaw config (`~/.openclaw/open
 | Variable | Default | Description |
 |----------|---------|-------------|
 | `WEB2LABS_API_KEY` | — | Your API key (starts with `sk_live_`) |
-| `WEB2LABS_API_ENDPOINT` | `https://web2labs.com` | API base URL |
+| `WEB2LABS_API_ENDPOINT` | `https://www.web2labs.com` | API base URL |
 | `WEB2LABS_DEFAULT_PRESET` | `youtube` | Default preset when none specified |
 | `WEB2LABS_DOWNLOAD_DIR` | `~/studio-exports` | Where downloads are saved |
 | `WEB2LABS_SPEND_POLICY` | `smart` | Spend confirmation mode |
@@ -332,9 +370,9 @@ The skill reads from environment variables or OpenClaw config (`~/.openclaw/open
 
 ## Links
 
-- **Product:** [web2labs.com](https://web2labs.com) — see real before/after examples
-- **OpenClaw Landing:** [web2labs.com/openclaw](https://web2labs.com/openclaw) — skill-specific info + install
-- **API Documentation:** [web2labs.com/api/v1/docs](https://web2labs.com/api/v1/docs) — Swagger/OpenAPI reference
+- **Product:** [web2labs.com](https://www.web2labs.com) — see real before/after examples
+- **OpenClaw Landing:** [web2labs.com/openclaw](https://www.web2labs.com/openclaw) — skill-specific info + install
+- **API Documentation:** [web2labs.com/api/v1/docs](https://www.web2labs.com/api/v1/docs) — Swagger/OpenAPI reference
 - **Examples:** [github.com/web2labs/web2labs-studio-examples](https://github.com/web2labs/web2labs-studio-examples)
 - **Support:** Use `studio_feedback` or email [hello@web2labs.com](mailto:hello@web2labs.com)
 
@@ -342,5 +380,5 @@ The skill reads from environment variables or OpenClaw config (`~/.openclaw/open
 
 <p align="center">
   <strong>Record once. Publish everywhere.</strong><br/>
-  <a href="https://web2labs.com/openclaw">Start free →</a>
+  <a href="https://www.web2labs.com/openclaw">Start free →</a>
 </p>
