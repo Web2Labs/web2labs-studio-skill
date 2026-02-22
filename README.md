@@ -52,24 +52,7 @@ AI-generated titles, descriptions, tags, chapters, pinned comments, and A/B/C th
 </tr>
 </table>
 
-### See the difference
 
-<table>
-<tr>
-<td align="center"><strong>Studio Thumbnail</strong></td>
-<td align="center"><strong>Amateur Thumbnail</strong></td>
-</tr>
-<tr>
-<td align="center">
-<img src="https://www.web2labs.com/assets/studio/thumbnails/thumbnail_1.webp" alt="Studio-generated thumbnail" width="400" />
-<br/><em>AI-generated, brand-colored, click-worthy.</em>
-</td>
-<td align="center">
-<img src="https://www.web2labs.com/assets/studio/thumbnails/thumbnail-amateur.webp" alt="Amateur thumbnail" width="400" />
-<br/><em>Generic frame grab. Viewers scroll right past.</em>
-</td>
-</tr>
-</table>
 
 ### High Retention Cut vs. Normal Video
 
@@ -86,6 +69,25 @@ AI-generated titles, descriptions, tags, chapters, pinned comments, and A/B/C th
 <td align="center">
 <img src="assets/normal-cut-sample.gif" alt="Normal unedited video" width="400" />
 <br/><em>Silences, filler, and rambles. Viewers scroll past.</em>
+</td>
+</tr>
+</table>
+
+### See the difference
+
+<table>
+<tr>
+<td align="center"><strong>Studio Thumbnail</strong></td>
+<td align="center"><strong>Amateur Thumbnail</strong></td>
+</tr>
+<tr>
+<td align="center">
+<img src="https://www.web2labs.com/assets/studio/thumbnails/thumbnail_1.webp" alt="Studio-generated thumbnail" width="400" />
+<br/><em>AI-generated, brand-colored, click-worthy.</em>
+</td>
+<td align="center">
+<img src="https://www.web2labs.com/assets/studio/thumbnails/thumbnail-amateur.webp" alt="Amateur thumbnail" width="400" />
+<br/><em>Generic frame grab. Viewers scroll right past.</em>
 </td>
 </tr>
 </table>

@@ -1,6 +1,9 @@
-import test from "node:test"
+import test, { after } from "node:test"
 import assert from "node:assert/strict"
 import { StudioSkillServer } from "../src/server.mjs"
+
+// McpServer keeps event loop handles open; force clean exit after tests.
+after(() => setTimeout(() => process.exit(0), 50))
 
 // --- readConfig ---
 
