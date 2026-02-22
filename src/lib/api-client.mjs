@@ -20,6 +20,7 @@ export class StudioApiClient {
     this.baseUrl = (config.apiEndpoint || "https://web2labs.com").replace(/\/$/, "")
     this.apiKey = config.apiKey || null
     this.bearerToken = config.bearerToken || null
+    this.basicAuth = config.basicAuth || null
     this.maxRetries = Number.isFinite(Number(config.maxRetries))
       ? Number(config.maxRetries)
       : 3
@@ -34,11 +35,23 @@ export class StudioApiClient {
     this.apiKey = key || null
   }
 
+  getBasicAuthHeader() {
+    if (!this.basicAuth) return {}
+    const encoded = Buffer.from(this.basicAuth).toString("base64")
+    return { Authorization: `Basic ${encoded}` }
+  }
+
   getAuthHeaders() {
+    const basicHeaders = this.getBasicAuthHeader()
+
     if (this.apiKey) {
-      return { "X-API-Key": this.apiKey }
+      return { ...basicHeaders, "X-API-Key": this.apiKey }
     }
     if (this.bearerToken) {
+      // Bearer token occupies the Authorization header, so basic auth
+      // cannot be sent simultaneously. This is acceptable because bearer
+      // tokens are only used briefly during the setup flow — for test
+      // instances behind HTTP basic auth, use `save_api_key` instead.
       return { Authorization: `Bearer ${this.bearerToken}` }
     }
     throw new StudioApiError(

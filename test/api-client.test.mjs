@@ -35,6 +35,30 @@ test("StudioApiClient prefers API key auth", () => {
   assert.equal(headers.Authorization, undefined)
 })
 
+test("StudioApiClient includes basic auth alongside API key", () => {
+  const client = new StudioApiClient({
+    apiEndpoint: "https://example.com",
+    apiKey: "w2l_test",
+    basicAuth: "web2labs:secret",
+  })
+
+  const headers = client.getAuthHeaders()
+  assert.equal(headers["X-API-Key"], "w2l_test")
+  const expected = `Basic ${Buffer.from("web2labs:secret").toString("base64")}`
+  assert.equal(headers.Authorization, expected)
+})
+
+test("StudioApiClient basic auth is omitted when bearer token is used", () => {
+  const client = new StudioApiClient({
+    apiEndpoint: "https://example.com",
+    bearerToken: "abc",
+    basicAuth: "web2labs:secret",
+  })
+
+  const headers = client.getAuthHeaders()
+  assert.equal(headers.Authorization, "Bearer abc")
+})
+
 test("StudioApiClient resolves v1 paths", () => {
   const client = new StudioApiClient({ apiEndpoint: "https://example.com" })
   assert.equal(client.resolveUrl("/credits"), "https://example.com/api/v1/credits")

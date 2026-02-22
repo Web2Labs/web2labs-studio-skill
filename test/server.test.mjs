@@ -16,6 +16,8 @@ test("readConfig reads environment variables", () => {
     process.env.WEB2LABS_DEFAULT_PRESET = "podcast"
     process.env.WEB2LABS_DOWNLOAD_DIR = "/tmp/exports"
     process.env.WEB2LABS_SPEND_POLICY = "explicit"
+    delete process.env.WEB2LABS_TEST_MODE
+    delete process.env.WEB2LABS_BASIC_AUTH
 
     const server = new StudioSkillServer()
     const config = server.config
@@ -26,8 +28,9 @@ test("readConfig reads environment variables", () => {
     assert.equal(config.defaultPreset, "podcast")
     assert.equal(config.downloadDir, "/tmp/exports")
     assert.equal(config.spendPolicy.mode, "explicit")
+    assert.equal(config.testMode, false)
+    assert.equal(config.basicAuth, null)
   } finally {
-    // Restore
     for (const key of [
       "WEB2LABS_API_ENDPOINT",
       "WEB2LABS_API_KEY",
@@ -35,6 +38,8 @@ test("readConfig reads environment variables", () => {
       "WEB2LABS_DEFAULT_PRESET",
       "WEB2LABS_DOWNLOAD_DIR",
       "WEB2LABS_SPEND_POLICY",
+      "WEB2LABS_TEST_MODE",
+      "WEB2LABS_BASIC_AUTH",
     ]) {
       if (original[key] === undefined) delete process.env[key]
       else process.env[key] = original[key]
@@ -51,6 +56,8 @@ test("readConfig uses defaults when env vars are absent", () => {
     delete process.env.WEB2LABS_DEFAULT_PRESET
     delete process.env.WEB2LABS_DOWNLOAD_DIR
     delete process.env.WEB2LABS_SPEND_POLICY
+    delete process.env.WEB2LABS_TEST_MODE
+    delete process.env.WEB2LABS_BASIC_AUTH
 
     const server = new StudioSkillServer()
     const config = server.config
@@ -58,12 +65,58 @@ test("readConfig uses defaults when env vars are absent", () => {
     assert.equal(config.apiEndpoint, "https://web2labs.com")
     assert.equal(config.apiKey, null)
     assert.equal(config.bearerToken, null)
+    assert.equal(config.basicAuth, null)
+    assert.equal(config.testMode, false)
     assert.equal(config.defaultPreset, "youtube")
     assert.equal(config.downloadDir, "~/studio-exports")
     assert.equal(config.spendPolicy.mode, "smart")
   } finally {
     for (const key of Object.keys(original)) {
       process.env[key] = original[key]
+    }
+  }
+})
+
+test("readConfig enables test mode with WEB2LABS_TEST_MODE=true", () => {
+  const original = { ...process.env }
+  try {
+    delete process.env.WEB2LABS_API_ENDPOINT
+    process.env.WEB2LABS_TEST_MODE = "true"
+    process.env.WEB2LABS_BASIC_AUTH = "web2labs:secret"
+
+    const server = new StudioSkillServer()
+    const config = server.config
+
+    assert.equal(config.testMode, true)
+    assert.equal(config.apiEndpoint, "https://test.web2labs.com")
+    assert.equal(config.basicAuth, "web2labs:secret")
+  } finally {
+    for (const key of [
+      "WEB2LABS_API_ENDPOINT",
+      "WEB2LABS_TEST_MODE",
+      "WEB2LABS_BASIC_AUTH",
+    ]) {
+      if (original[key] === undefined) delete process.env[key]
+      else process.env[key] = original[key]
+    }
+  }
+})
+
+test("readConfig test mode can be overridden with explicit endpoint", () => {
+  const original = { ...process.env }
+  try {
+    process.env.WEB2LABS_TEST_MODE = "true"
+    process.env.WEB2LABS_API_ENDPOINT = "https://custom-test.example.com"
+
+    const server = new StudioSkillServer()
+    const config = server.config
+
+    assert.equal(config.testMode, true)
+    assert.equal(config.apiEndpoint, "https://custom-test.example.com")
+  } finally {
+    for (const key of ["WEB2LABS_TEST_MODE", "WEB2LABS_API_ENDPOINT"]) {
+      if (original[key] === undefined) delete process.env[key]
+      else process.env[key] = original[key]
     }
   }
 })
@@ -80,6 +133,8 @@ test("createToolContext returns expected shape", () => {
   assert.ok(ctx.downloadDir, "should have downloadDir")
   assert.ok(ctx.skillVersion, "should have skillVersion")
   assert.ok(ctx.spendPolicy, "should have spendPolicy")
+  assert.equal(typeof ctx.testMode, "boolean", "should have testMode")
+  assert.ok("basicAuth" in ctx, "should have basicAuth key")
 })
 
 test("createToolContext apiClient has correct baseUrl", () => {

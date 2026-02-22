@@ -152,7 +152,7 @@ Before batch processing, confirm total credit cost:
   - `action: "list"` to inspect available intro/outro/watermark assets.
   - `action: "upload"` + `asset_type` + `file_path` to add reusable media.
   - `action: "delete"` + `asset_type` to remove old assets.
-- If user says “use this intro/outro on future videos”, upload via `studio_assets` first, then ensure brand defaults are configured with `studio_brand`.
+- If user says "use this intro/outro on future videos", upload via `studio_assets` first, then ensure brand defaults are configured with `studio_brand`.
 
 ## Environment Variables
 
@@ -161,6 +161,43 @@ Before batch processing, confirm total credit cost:
 - `WEB2LABS_API_ENDPOINT`: API endpoint URL (default: `https://web2labs.com`).
 - `WEB2LABS_SOCKET_URL`: WebSocket server URL for real-time progress (default: same as API endpoint). Override for local dev when the socket server runs on a different port.
 - `WEB2LABS_SPEND_POLICY`: Spend confirmation policy (`smart`, `explicit`, `auto`).
+- `WEB2LABS_TEST_MODE`: Set to `true` to target the test instance (`https://test.web2labs.com`). Changes the default API endpoint and enables test-mode behavior.
+- `WEB2LABS_BASIC_AUTH`: HTTP Basic Auth credentials in `user:password` format. Required when the target instance is behind HTTP Basic Auth (e.g. the test instance).
+
+## Test Mode
+
+Test mode targets the isolated test instance at `https://test.web2labs.com`. The test instance has its own database, storage, and configuration — nothing affects production.
+
+### Enabling test mode
+
+Set these environment variables:
+
+```
+WEB2LABS_TEST_MODE=true
+WEB2LABS_BASIC_AUTH=web2labs:<password>
+WEB2LABS_API_KEY=<test-instance-api-key>
+```
+
+`WEB2LABS_TEST_MODE=true` changes the default API endpoint to `https://test.web2labs.com`. You can also set `WEB2LABS_API_ENDPOINT` explicitly to override the URL.
+
+`WEB2LABS_BASIC_AUTH` provides the HTTP Basic Auth credentials that the test instance's nginx reverse proxy requires on all requests (format: `user:password`).
+
+### Getting a test API key
+
+The test instance is password-protected at the nginx level, so the magic-link setup flow (`send_magic_link` / `complete_setup`) may not complete fully. Instead:
+
+1. Open `https://test.web2labs.com` in a browser and enter the HTTP Basic Auth credentials when prompted.
+2. Create an account or log in.
+3. Navigate to `/user/api` and generate an API key.
+4. Save it via `studio_setup` with `action: "save_api_key"` and `api_key: "<your-key>"`, or set `WEB2LABS_API_KEY` directly.
+
+### Test instance differences
+
+- No real billing (`BILLING_MODE=test`), no real emails, no analytics.
+- Local disk storage instead of GCS.
+- Separate database (`web2labs_test`).
+- Lower resource limits than production.
+- Projects and data are fully isolated from production.
 
 ## Error Handling
 

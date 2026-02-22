@@ -19,11 +19,18 @@ export class SocketClient {
       throw new Error("Failed to obtain socket token")
     }
 
+    const extraHeaders = {}
+    if (this.apiClient.basicAuth) {
+      const encoded = Buffer.from(this.apiClient.basicAuth).toString("base64")
+      extraHeaders.Authorization = `Basic ${encoded}`
+    }
+
     this.socket = io(this.socketUrl, {
       path: DEFAULT_SOCKET_PATH,
       auth: { token },
       reconnection: false,
       transports: ["websocket", "polling"],
+      extraHeaders,
     })
 
     await new Promise((resolve, reject) => {

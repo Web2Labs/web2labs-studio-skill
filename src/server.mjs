@@ -32,6 +32,7 @@ export class StudioSkillServer {
       apiEndpoint: this.config.apiEndpoint,
       apiKey: this.config.apiKey,
       bearerToken: this.config.bearerToken,
+      basicAuth: this.config.basicAuth,
     })
 
     this.server = new McpServer({
@@ -41,10 +42,22 @@ export class StudioSkillServer {
   }
 
   readConfig() {
+    const testMode =
+      process.env.WEB2LABS_TEST_MODE === "true" ||
+      process.env.WEB2LABS_TEST_MODE === "1"
+
+    const defaultEndpoint = testMode
+      ? "https://test.web2labs.com"
+      : "https://web2labs.com"
+
+    const basicAuth = process.env.WEB2LABS_BASIC_AUTH || null
+
     return {
-      apiEndpoint: process.env.WEB2LABS_API_ENDPOINT || "https://web2labs.com",
+      testMode,
+      apiEndpoint: process.env.WEB2LABS_API_ENDPOINT || defaultEndpoint,
       apiKey: process.env.WEB2LABS_API_KEY || null,
       bearerToken: process.env.WEB2LABS_BEARER_TOKEN || null,
+      basicAuth,
       defaultPreset: process.env.WEB2LABS_DEFAULT_PRESET || "youtube",
       downloadDir: process.env.WEB2LABS_DOWNLOAD_DIR || "~/studio-exports",
       spendPolicy: SpendPolicy.fromEnvironment(process.env),
@@ -55,6 +68,8 @@ export class StudioSkillServer {
     return {
       apiClient: this.apiClient,
       apiEndpoint: this.config.apiEndpoint,
+      basicAuth: this.config.basicAuth,
+      testMode: this.config.testMode,
       defaultPreset: this.config.defaultPreset,
       downloadDir: this.config.downloadDir,
       skillVersion: this.skillVersion,

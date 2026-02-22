@@ -34,7 +34,11 @@ export class SetupTool {
 
   static async runSendMagicLink(context, email) {
     SetupTool.assertEmail(email)
-    const result = await AuthFlow.sendMagicLink(context.apiEndpoint, email)
+    const result = await AuthFlow.sendMagicLink(
+      context.apiEndpoint,
+      email,
+      context.basicAuth || null
+    )
     return {
       action: "send_magic_link",
       sent: true,
@@ -58,11 +62,13 @@ export class SetupTool {
     const tokenResult = await AuthFlow.completeMagicLinkToken(
       context.apiEndpoint,
       email,
-      normalizedCode
+      normalizedCode,
+      context.basicAuth || null
     )
     const keyResult = await AuthFlow.generateApiKey(
       context.apiEndpoint,
-      tokenResult.accessToken
+      tokenResult.accessToken,
+      context.basicAuth || null
     )
     const storeResult = await AuthFlow.storeApiKey(keyResult.key)
 

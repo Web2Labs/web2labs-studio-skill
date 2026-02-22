@@ -41,6 +41,12 @@ export class AuthFlow {
     return new AuthFlowError(message, code, response.status, payload?.error || null)
   }
 
+  static buildBasicAuthHeader(basicAuth) {
+    if (!basicAuth) return {}
+    const encoded = Buffer.from(basicAuth).toString("base64")
+    return { Authorization: `Basic ${encoded}` }
+  }
+
   static async requestJson(url, options = {}) {
     const timeoutMs = Number(options.timeoutMs || AuthFlow.DEFAULT_TIMEOUT_MS)
     const controller = new AbortController()
@@ -83,13 +89,16 @@ export class AuthFlow {
     return dirname(AuthFlow.getConfigPath())
   }
 
-  static async sendMagicLink(apiEndpoint, email) {
+  static async sendMagicLink(apiEndpoint, email, basicAuth = null) {
     const normalizedEndpoint = AuthFlow.normalizeApiEndpoint(apiEndpoint)
     const { response, payload } = await AuthFlow.requestJson(
       `${normalizedEndpoint}/api/auth/magic/send`,
       {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: {
+          "Content-Type": "application/json",
+          ...AuthFlow.buildBasicAuthHeader(basicAuth),
+        },
         body: JSON.stringify({ email }),
       }
     )
@@ -118,13 +127,16 @@ export class AuthFlow {
     }
   }
 
-  static async completeMagicLinkToken(apiEndpoint, email, code) {
+  static async completeMagicLinkToken(apiEndpoint, email, code, basicAuth = null) {
     const normalizedEndpoint = AuthFlow.normalizeApiEndpoint(apiEndpoint)
     const { response, payload } = await AuthFlow.requestJson(
       `${normalizedEndpoint}/api/auth/magic/token`,
       {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: {
+          "Content-Type": "application/json",
+          ...AuthFlow.buildBasicAuthHeader(basicAuth),
+        },
         body: JSON.stringify({ state: email, code }),
       }
     )
@@ -153,8 +165,12 @@ export class AuthFlow {
     }
   }
 
-  static async generateApiKey(apiEndpoint, accessToken) {
+  static async generateApiKey(apiEndpoint, accessToken, basicAuth = null) {
     const normalizedEndpoint = AuthFlow.normalizeApiEndpoint(apiEndpoint)
+    // When basic auth is set, both Basic and Bearer need the Authorization
+    // header. HTTP only allows one, so we prefer Bearer (required by the app)
+    // and skip basic auth here. For test instances behind HTTP basic auth,
+    // generate the API key via the web UI and use `save_api_key` instead.
     const { response, payload } = await AuthFlow.requestJson(
       `${normalizedEndpoint}/api/user/api-key/generate`,
       {
