@@ -1,98 +1,346 @@
-# Web2Labs Studio - OpenClaw Skill
+<p align="center">
+  <a href="https://web2labs.com">
+    <img src="https://web2labs.com/assets/studio/logo-full.svg" alt="Web2Labs Studio" width="320" />
+  </a>
+</p>
 
-AI-powered video editing from your terminal.
+<h3 align="center">AI video editing — turns videos & streams into<br/>complete YouTube videos & shorts</h3>
+
+<p align="center">
+  <a href="https://web2labs.com/openclaw"><strong>Landing Page</strong></a> · 
+  <a href="https://web2labs.com"><strong>Web App</strong></a> · 
+  <a href="https://web2labs.com/api/v1/docs"><strong>API Docs</strong></a> · 
+  <a href="https://github.com/web2labs/web2labs-studio-examples"><strong>Examples</strong></a>
+</p>
+
+<p align="center">
+  <img src="https://img.shields.io/badge/OpenClaw-skill-blue?style=flat-square" alt="OpenClaw Skill" />
+  <img src="https://img.shields.io/badge/node-%3E%3D18-brightgreen?style=flat-square" alt="Node.js 18+" />
+  <img src="https://img.shields.io/badge/tools-19-orange?style=flat-square" alt="19 MCP Tools" />
+  <img src="https://img.shields.io/badge/license-MIT-green?style=flat-square" alt="MIT License" />
+</p>
+
+---
+
+## What is Web2Labs Studio?
+
+**Web2Labs Studio** is a cloud video editing platform that turns raw recordings into publish-ready content — automatically. No timeline. No editing software. Just upload and get back:
+
+<table>
+<tr>
+<td width="33%" align="center">
+
+**Edited Video**
+
+Dead air removed. Pacing tightened. Dynamic zoom punch-ins. Animated captions. Audio normalized. Every second earns its place.
+
+</td>
+<td width="33%" align="center">
+
+**25+ Shorts**
+
+Vertical clips auto-extracted from your recording, ready to post on YouTube Shorts, TikTok, Instagram Reels, and X.
+
+</td>
+<td width="33%" align="center">
+
+**Full Meta Package**
+
+AI-generated titles, descriptions, tags, chapters, pinned comments, and A/B/C thumbnail variants — everything you need to publish.
+
+</td>
+</tr>
+</table>
+
+> **See it in action:** [web2labs.com](https://web2labs.com) has side-by-side comparisons of raw vs. edited output — high retention cuts vs. normal video. The difference is night and day.
+
+### Who is it for?
+
+YouTube creators, Twitch streamers, podcasters, educators, coaches — anyone who records video and wants it edited without the grind. Studio handles the tedious parts (cutting silence, adding captions, generating shorts) so you can focus on creating.
+
+---
+
+## This Skill: Studio in Your Terminal
+
+This OpenClaw skill gives you the **full power of Studio** from your AI assistant. Talk to your agent, and it handles everything:
+
+```
+You:   "Edit my latest recording as a YouTube video"
+Agent: Uploading ~/Desktop/recording.mp4... Processing with 'youtube' preset.
+       Transcribing → Cutting → Rendering... Done in 3m 42s.
+       
+       Downloaded to ~/studio-exports/my-recording/:
+       ├── main.mp4              (edited video, 18:24)
+       ├── shorts/
+       │   ├── short-1.mp4       (0:58)
+       │   ├── short-2.mp4       (0:45)
+       │   └── ... 23 more
+       ├── subtitles.srt
+       └── transcription.json
+       
+       Want me to generate thumbnail variants? (10 Creator Credits)
+```
+
+### From URL — no download needed
+
+```
+You:   "Make shorts from https://youtube.com/watch?v=dQw4w9WgXcQ"
+Agent: Downloading via yt-dlp... Uploading to Studio...
+       Processing with 'shorts-only' preset... Done.
+       27 shorts ready for download.
+```
+
+---
 
 ## Quick Start
 
-1. Install: `clawhub install @web2labs/studio`
-2. Setup: `Run studio_setup with action send_magic_link and my email`
-3. Edit: `Edit ~/Desktop/my-recording.mp4 as a youtube video`
+**3 commands. 2 free credits. No credit card.**
 
-## Features
+```bash
+# 1. Install the skill
+clawhub install @web2labs/studio
 
-- Jump-cut editing
-- Auto subtitles
-- Shorts generation
-- AI thumbnail generation (A/B/C variants)
-- Brand kit management (colors/fonts/identity defaults)
-- Reusable intro/outro/watermark asset management
-- Pricing and pre-upload cost estimation
-- Usage analytics for projects/credits/time saved
-- One-click brand import from YouTube/Twitch/X URLs
-- URL input via yt-dlp (YouTube/Twitch/Vimeo)
-- Optional upload webhooks for fire-and-forget automation
-- Batch processing workflows
-- Feedback reporting directly from the agent
+# 2. Set up your account (sends a magic link to your email)
+"Run studio_setup with my email hello@example.com"
 
-## Presets
+# 3. Edit your first video
+"Edit ~/Desktop/my-recording.mp4 as a youtube video"
+```
 
-- `quick`
-- `youtube`
-- `shorts-only`
-- `podcast`
-- `gaming`
-- `tutorial`
-- `vlog`
-- `cinematic`
+That's it. Your first two videos are free.
+
+---
+
+## What You Get: The Full Package
+
+Every video processed through Studio returns a complete content package:
+
+### Edited Video
+- **Smart jump-cuts** — AI removes dead air, filler words, and awkward pauses while preserving meaning
+- **Dynamic zoom punch-ins** — automatic Ken Burns-style zooms at the right moments to hold attention
+- **Animated captions** — word-level subtitles styled to your brand, because most viewers watch on mute
+- **Tighter pacing** — rambles tightened, momentum maintained, every minute feels intentional
+- **Audio normalization** — broadcast-standard loudness (-14 LUFS) so you sound professional
+- **High-quality render** — CRF 18, ready to upload directly
+
+### Vertical Shorts
+- **25+ shorts per recording** — auto-extracted highlight clips with clean hooks and payoffs
+- **Multi-platform ready** — formatted for YouTube Shorts, TikTok, Instagram Reels, and X
+- **One recording → one week of content** — never go dark on social media again
+
+### Meta Package
+- **A/B/C thumbnail variants** — AI-generated, brand-colored thumbnails you can test
+- **Titles, descriptions, tags** — optimized for search and click-through
+- **Chapters** — auto-generated from your transcript so viewers can jump in
+- **Pinned comment** — ready to copy-paste for engagement
+
+---
+
+## 8 Presets for Every Content Style
+
+| Preset | Best For | What It Does |
+|--------|----------|-------------|
+| `youtube` | Standard YouTube videos | Subtitles + shorts + music + full meta |
+| `quick` | Fast turnaround | Clean cuts, no extras, fastest render |
+| `shorts-only` | Social media blitz | Only generates vertical shorts |
+| `podcast` | Talking-head podcasts | Soft cuts, subtitles, no zoom |
+| `gaming` | Streams & gameplay | Dynamic zoom, gaming-style pacing |
+| `tutorial` | Educational content | Gentle edits, preserves explanations |
+| `vlog` | Daily vlogs | Balanced pacing, natural feel |
+| `cinematic` | High production | Premium settings, slower pacing |
+
+Mix presets with custom overrides for full control:
+
+```
+"Edit my video with the youtube preset but disable music and set subtitle style to minimal"
+```
+
+---
+
+## 19 Tools at Your Fingertips
+
+<details>
+<summary><strong>Core Workflow</strong></summary>
+
+| Tool | What It Does |
+|------|-------------|
+| `studio_setup` | One-time account setup via magic link or existing API key |
+| `studio_upload` | Upload local files or URLs (YouTube, Twitch, Vimeo) for processing |
+| `studio_status` | Check current project processing status |
+| `studio_poll` | Smart polling — waits for completion with progress updates |
+| `studio_results` | Get output URLs and metadata for a completed project |
+| `studio_download` | Download all outputs to your local filesystem |
+| `studio_projects` | List your recent projects |
+| `studio_delete` | Delete a project and free up storage |
+
+</details>
+
+<details>
+<summary><strong>Premium Features</strong></summary>
+
+| Tool | What It Does |
+|------|-------------|
+| `studio_thumbnails` | Generate A/B/C thumbnail variants for any completed project |
+| `studio_rerender` | Re-render with different settings — no re-upload needed (first free, then 15 CC) |
+| `studio_brand` | Save your brand colors, fonts, and identity for consistent output |
+| `studio_brand_import` | Auto-import brand settings from your YouTube or Twitch channel |
+| `studio_assets` | Upload reusable intros, outros, and watermarks |
+| `studio_analytics` | See your usage stats and time saved |
+
+</details>
+
+<details>
+<summary><strong>Credits & Pricing</strong></summary>
+
+| Tool | What It Does |
+|------|-------------|
+| `studio_credits` | Check your API credit and Creator Credit balances |
+| `studio_pricing` | Get current pricing for all features and bundles |
+| `studio_estimate` | Estimate exact cost before uploading |
+| `studio_feedback` | Report bugs, request features, or ask questions |
+| `studio_referral` | Get your referral code — earn 5 free credits per signup |
+
+</details>
+
+---
+
+## Pricing
+
+**2 free credits on signup. No credit card required.**
+
+Every video costs **1 API credit** (or 2 for rush priority). Premium features like thumbnails use Creator Credits.
+
+| Bundle | Credits | Price | Per Video |
+|--------|---------|-------|-----------|
+| **Free** | 2 | €0 | €0 |
+| Casual | 10 | €22.99 | €2.30 |
+| Starter | 20 | €39.99 | €2.00 |
+| Pro | 100 | €199.99 | €2.00 |
+| Studio | 250 | €449.99 | €1.80 |
+| Agency | 1000 | €1,699.99 | €1.70 |
+
+**Subscribers** (Starter €20/mo, Creator €50/mo, Legend €800 lifetime) can use their monthly project allocation through the skill — as low as €0.50/video on Creator tier.
+
+[View full pricing →](https://web2labs.com/pricing)
+
+---
+
+## Referral Program
+
+Every user gets a unique referral code. Share it and both you and your friend get **5 free API credits** (60-day expiry).
+
+```
+You:   "What's my referral code?"
+Agent: Your code is STUDIO-K7M3
+       Share: https://web2labs.com/ref/STUDIO-K7M3
+       
+       Stats: 3 referrals, 15 credits earned, 7 slots remaining
+```
+
+Earn up to **50 free credits** (10 referrals). That's 50 fully edited videos — for free.
+
+---
+
+## Advanced Workflows
+
+### Brand Consistency
+
+Set up your brand once, and every video matches your style:
+
+```
+You:   "Import my brand from https://youtube.com/@mychannel"
+Agent: Imported from YouTube: primary #1a73e8, secondary #ff6f00,
+       identity: "Tech educator focused on practical tutorials"
+       Applied to your brand kit. All future videos will use these settings.
+```
+
+### Batch Processing
+
+```
+You:   "Process all .mp4 files in ~/recordings/ as youtube videos"
+Agent: Found 5 files. This will consume 5 API credits. Proceed?
+You:   "Yes"
+Agent: Processing 5 videos... [████████░░] 3/5 complete
+```
+
+### Fire-and-Forget with Webhooks
+
+```
+You:   "Upload this video and send results to https://my-server.com/callback"
+Agent: Uploaded with webhook. You'll receive a signed callback at
+       project.completed — no need to poll.
+```
+
+### Re-render Without Re-upload
+
+```
+You:   "Add subtitles to that last video"
+Agent: Re-rendering with subtitles enabled. First re-render is free!
+       No re-upload needed — reusing existing analysis.
+```
+
+---
+
+## Spend Control
+
+You're always in control of what gets spent. Configure your spend policy:
+
+| Mode | Behavior |
+|------|----------|
+| `smart` (default) | Confirms only high-cost or low-balance actions |
+| `explicit` | Confirms every credit-spending action |
+| `auto` | Proceeds without prompts (with configurable caps) |
+
+```bash
+# Set in your environment
+export WEB2LABS_SPEND_POLICY=explicit
+```
+
+---
 
 ## Requirements
 
-- Node.js 18+
-- Web2Labs account (2 free credits on first API key generation)
-- Optional: `yt-dlp` for URL workflows
+- **Node.js 18+**
+- **Web2Labs account** — [sign up free](https://web2labs.com/openclaw) (2 free credits, no card)
+- **Optional:** `yt-dlp` for URL-based workflows (`brew install yt-dlp`)
 
-## Security Notes
+---
 
-- API key is read from OpenClaw skill config/env injection.
-- The skill never logs full key values.
-- URL downloads happen locally on the user machine.
+## Configuration
 
-## Setup Tool
+The skill reads from environment variables or OpenClaw config (`~/.openclaw/openclaw.json`):
 
-`studio_setup` supports:
-- `send_magic_link` (email required)
-- `complete_setup` (email + code required)
-- `save_api_key` (api_key required)
+| Variable | Default | Description |
+|----------|---------|-------------|
+| `WEB2LABS_API_KEY` | — | Your API key (starts with `sk_live_`) |
+| `WEB2LABS_API_ENDPOINT` | `https://web2labs.com` | API base URL |
+| `WEB2LABS_DEFAULT_PRESET` | `youtube` | Default preset when none specified |
+| `WEB2LABS_DOWNLOAD_DIR` | `~/studio-exports` | Where downloads are saved |
+| `WEB2LABS_SPEND_POLICY` | `smart` | Spend confirmation mode |
 
-## Tooling Overview
+---
 
-- `studio_credits`: Check API + Creator Credit balances.
-- `studio_pricing`: Fetch pricing metadata for premium features.
-- `studio_estimate`: Estimate API/Creator cost before upload.
-- `studio_upload`: Upload local files or supported URLs (`priority: "rush"` available, 2 API credits, optional `webhook_url`).
-- `studio_poll`: Wait for completion with smart polling.
-- `studio_results`: Inspect outputs and retention metadata.
-- `studio_thumbnails`: Generate thumbnail variants for completed projects.
-- `studio_rerender`: Re-render completed projects with config changes (no re-upload).
-- `studio_download`: Download main video, shorts, subtitles, transcription, and thumbnails.
-- `studio_analytics`: Usage and ROI metrics.
-- `studio_brand`: Read/update brand kit settings used for future outputs.
-- `studio_brand_import`: Import suggested brand settings from channel profile URL.
-- `studio_assets`: Upload/list/delete reusable intro/outro/watermark assets.
-- `studio_feedback`: Submit bugs/suggestions/questions.
+## Security
 
-## Spend Confirmation
+- API keys are stored locally in your OpenClaw config — never sent to third parties
+- The skill never logs or displays full API key values
+- URL downloads happen locally on your machine via yt-dlp — files never touch third-party servers
+- All API communication uses HTTPS
+- Webhook callbacks are HMAC-SHA256 signed with your secret
 
-Paid actions can require explicit confirmation based on spend policy:
-- `WEB2LABS_SPEND_POLICY=smart` (default)
-- `WEB2LABS_SPEND_POLICY=explicit`
-- `WEB2LABS_SPEND_POLICY=auto`
-
-If a tool returns `spend_confirmation_required`, ask the user and call again with:
-- `confirm_spend: true`
-
-`studio_pricing` and `studio_credits` include purchase links with `ref=openclaw` for direct checkout.
-
-## Security Best Practices
-
-- Never paste API keys into prompts or logs.
-- Keep OpenClaw config files restricted to your user account.
-- Use HTTPS API endpoints only.
-- Verify you own rights to content before URL-based downloads/uploads.
-- Rotate API keys immediately if you suspect exposure.
+---
 
 ## Links
 
-- https://web2labs.com/openclaw
-- https://web2labs.com/docs-api
-- https://github.com/web2labs/web2labs-studio-examples
+- **Product:** [web2labs.com](https://web2labs.com) — see real before/after examples
+- **OpenClaw Landing:** [web2labs.com/openclaw](https://web2labs.com/openclaw) — skill-specific info + install
+- **API Documentation:** [web2labs.com/api/v1/docs](https://web2labs.com/api/v1/docs) — Swagger/OpenAPI reference
+- **Examples:** [github.com/web2labs/web2labs-studio-examples](https://github.com/web2labs/web2labs-studio-examples)
+- **Support:** Use `studio_feedback` or email [hello@web2labs.com](mailto:hello@web2labs.com)
+
+---
+
+<p align="center">
+  <strong>Record once. Publish everywhere.</strong><br/>
+  <a href="https://web2labs.com/openclaw">Start free →</a>
+</p>

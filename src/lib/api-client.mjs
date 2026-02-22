@@ -197,6 +197,10 @@ export class StudioApiClient {
     throw new StudioApiError("Request retries exhausted", "retry_exhausted", 503)
   }
 
+  async getSocketToken() {
+    return this.request("POST", "/api/auth/socket")
+  }
+
   async getCredits() {
     return this.request("GET", "/credits")
   }

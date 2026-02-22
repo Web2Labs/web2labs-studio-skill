@@ -25,7 +25,7 @@ automatic subtitles, and shorts.
 - `studio_upload`: Upload local file or supported URL for processing.
   - supports optional `webhook_url` + `webhook_secret` for `project.completed` callbacks.
 - `studio_status`: Check current project status.
-- `studio_poll`: Wait for completion with smart polling.
+- `studio_poll`: Wait for completion with real-time WebSocket progress (falls back to HTTP polling).
 - `studio_results`: Get output URLs and metadata.
 - `studio_download`: Download outputs to local filesystem.
 - `studio_credits`: Check API/subscription balances.
@@ -153,6 +153,14 @@ Before batch processing, confirm total credit cost:
   - `action: "upload"` + `asset_type` + `file_path` to add reusable media.
   - `action: "delete"` + `asset_type` to remove old assets.
 - If user says “use this intro/outro on future videos”, upload via `studio_assets` first, then ensure brand defaults are configured with `studio_brand`.
+
+## Environment Variables
+
+- `WEB2LABS_API_KEY`: API key for authentication.
+- `WEB2LABS_BEARER_TOKEN`: Bearer token for authentication (alternative to API key).
+- `WEB2LABS_API_ENDPOINT`: API endpoint URL (default: `https://web2labs.com`).
+- `WEB2LABS_SOCKET_URL`: WebSocket server URL for real-time progress (default: same as API endpoint). Override for local dev when the socket server runs on a different port.
+- `WEB2LABS_SPEND_POLICY`: Spend confirmation policy (`smart`, `explicit`, `auto`).
 
 ## Error Handling
 
