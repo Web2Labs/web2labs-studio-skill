@@ -20,11 +20,11 @@ export class SpendPolicy {
   }
 
   static normalizeMode(mode) {
-    const normalized = String(mode || "smart").trim().toLowerCase()
+    const normalized = String(mode || "auto").trim().toLowerCase()
     if (SpendPolicy.MODES.has(normalized)) {
       return normalized
     }
-    return "smart"
+    return "auto"
   }
 
   static fromEnvironment(env = process.env) {

@@ -17,11 +17,11 @@ test("SpendPolicy.normalizeMode is case-insensitive", () => {
   assert.equal(SpendPolicy.normalizeMode("Smart"), "smart")
 })
 
-test("SpendPolicy.normalizeMode defaults to smart for invalid values", () => {
-  assert.equal(SpendPolicy.normalizeMode("invalid"), "smart")
-  assert.equal(SpendPolicy.normalizeMode(""), "smart")
-  assert.equal(SpendPolicy.normalizeMode(null), "smart")
-  assert.equal(SpendPolicy.normalizeMode(undefined), "smart")
+test("SpendPolicy.normalizeMode defaults to auto for invalid values", () => {
+  assert.equal(SpendPolicy.normalizeMode("invalid"), "auto")
+  assert.equal(SpendPolicy.normalizeMode(""), "auto")
+  assert.equal(SpendPolicy.normalizeMode(null), "auto")
+  assert.equal(SpendPolicy.normalizeMode(undefined), "auto")
 })
 
 // --- toNumber ---
@@ -84,7 +84,7 @@ test("SpendPolicy.fromEnvironment reads all env vars", () => {
 
 test("SpendPolicy.fromEnvironment uses defaults for empty env", () => {
   const policy = SpendPolicy.fromEnvironment({})
-  assert.equal(policy.mode, "smart")
+  assert.equal(policy.mode, "auto")
   assert.equal(policy.smartApiConfirmThreshold, 2)
   assert.equal(policy.smartCreatorConfirmThreshold, 8)
   assert.equal(policy.lowApiBalanceThreshold, 2)
@@ -108,7 +108,7 @@ test("SpendPolicy.fromContext reads from context object", () => {
 
 test("SpendPolicy.fromContext falls back to env when context has no spendPolicy", () => {
   const policy = SpendPolicy.fromContext({})
-  assert.equal(policy.mode, "smart") // default
+  assert.equal(policy.mode, "auto") // default
 })
 
 // ===================== SpendPolicyGuard =====================
