@@ -69,7 +69,7 @@ test("readConfig uses defaults when env vars are absent", () => {
     assert.equal(config.testMode, false)
     assert.equal(config.defaultPreset, "youtube")
     assert.equal(config.downloadDir, "~/studio-exports")
-    assert.equal(config.spendPolicy.mode, "smart")
+    assert.equal(config.spendPolicy.mode, "auto")
   } finally {
     for (const key of Object.keys(original)) {
       process.env[key] = original[key]
@@ -250,6 +250,7 @@ test("registerTools registers all expected tools", () => {
     "studio_delete",
     "studio_feedback",
     "studio_referral",
+    "studio_watch",
   ]
 
   for (const name of expectedTools) {

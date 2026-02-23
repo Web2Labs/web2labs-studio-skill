@@ -28,6 +28,10 @@ class FakeApiClient {
     }
   }
 
+  async getAnalytics() {
+    return { thisMonth: { apiCreditsUsed: 0, creatorCreditsUsed: 0, projectsProcessed: 0 } }
+  }
+
   async listProjectThumbnails() {
     return { thumbnails: [] }
   }

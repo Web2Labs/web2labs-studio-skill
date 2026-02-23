@@ -23,6 +23,7 @@ import { SetupTool } from "./tools/setup.mjs"
 import { StatusTool } from "./tools/status.mjs"
 import { ThumbnailsTool } from "./tools/thumbnails.mjs"
 import { UploadTool } from "./tools/upload.mjs"
+import { WatchTool } from "./tools/watch.mjs"
 
 export class StudioSkillServer {
   constructor() {
@@ -417,6 +418,59 @@ export class StudioSkillServer {
           ),
       },
       ReferralTool.execute
+    )
+
+    this.registerTool(
+      "studio_watch",
+      "Watch a YouTube or Twitch channel for new videos and auto-process them.",
+      {
+        action: z
+          .enum(["add", "list", "remove", "check", "pause", "resume", "status"])
+          .optional()
+          .describe("Defaults to list"),
+        url: z
+          .string()
+          .optional()
+          .describe("Channel URL (required for add)"),
+        id: z
+          .string()
+          .optional()
+          .describe("Watcher ID (for remove/pause/resume/status/check)"),
+        preset: z
+          .enum([
+            "quick",
+            "youtube",
+            "shorts-only",
+            "podcast",
+            "gaming",
+            "tutorial",
+            "vlog",
+            "cinematic",
+          ])
+          .optional()
+          .describe("Studio preset for processing (for add)"),
+        configuration: z
+          .record(z.any())
+          .optional()
+          .describe("Configuration overrides (for add)"),
+        poll_interval_minutes: z
+          .number()
+          .optional()
+          .describe("How often to check for new videos in minutes (default 30, for add)"),
+        max_duration_minutes: z
+          .number()
+          .optional()
+          .describe("Skip videos longer than this (default 120, for add)"),
+        max_daily_uploads: z
+          .number()
+          .optional()
+          .describe("Max uploads per day per watcher (default 5, for add)"),
+        output_dir: z
+          .string()
+          .optional()
+          .describe("Directory for auto-downloading results (for add)"),
+      },
+      WatchTool.execute
     )
 
   }

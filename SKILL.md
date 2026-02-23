@@ -41,6 +41,7 @@ automatic subtitles, and shorts.
 - `studio_delete`: Delete a project.
 - `studio_feedback`: Report bugs/suggestions/questions.
 - `studio_referral`: Get or apply referral codes for bonus credits.
+- `studio_watch`: Watch a YouTube or Twitch channel for new videos and auto-process them.
 
 ## Presets
 
@@ -79,20 +80,15 @@ automatic subtitles, and shorts.
 ## Spend Policy
 
 Spend policy is controlled by env var `WEB2LABS_SPEND_POLICY`:
-- `smart` (default): confirm only higher-risk or higher-cost spends.
-- `explicit`: confirm all credit-spending actions.
-- `auto`: proceed without prompt unless auto-spend caps are exceeded.
+- `auto` (default): proceed without prompt unless auto-spend caps are exceeded. Best for most users who want a frictionless workflow.
+- `smart`: confirm higher-risk or higher-cost spends (rush uploads, low balance, large creator credit spend).
+- `explicit`: confirm every credit-spending action. Use for strict budget control.
 
-Smart mode confirms when any of these apply:
-- Rush upload (`priority: "rush"`).
-- Creator Credit spend exceeds smart threshold.
-- Remaining balance is low.
-
-Auto mode caps can be tuned with:
-- `WEB2LABS_AUTO_SPEND_MAX_API_PER_ACTION`
-- `WEB2LABS_AUTO_SPEND_MAX_CREATOR_PER_ACTION`
-- `WEB2LABS_AUTO_SPEND_MAX_API_PER_MONTH`
-- `WEB2LABS_AUTO_SPEND_MAX_CREATOR_PER_MONTH`
+Auto mode caps (all tunable via env vars):
+- `WEB2LABS_AUTO_SPEND_MAX_API_PER_ACTION` (default: 2)
+- `WEB2LABS_AUTO_SPEND_MAX_CREATOR_PER_ACTION` (default: 40)
+- `WEB2LABS_AUTO_SPEND_MAX_API_PER_MONTH` (default: 80)
+- `WEB2LABS_AUTO_SPEND_MAX_CREATOR_PER_MONTH` (default: 400)
 
 When a tool returns `spend_confirmation_required`, ask the user and re-run with `confirm_spend: true`.
 
@@ -130,6 +126,7 @@ Before batch processing, confirm total credit cost:
 6. For URLs, verify yt-dlp availability before proceeding.
 7. Respect user rights and content ownership.
 8. For `priority: "rush"`, explicitly confirm "2 API credits instead of 1" before proceeding.
+9. For watch mode, only monitor channels the user owns or has permission to process.
 
 ## Upsell Moments
 
@@ -153,6 +150,48 @@ Before batch processing, confirm total credit cost:
   - `action: "upload"` + `asset_type` + `file_path` to add reusable media.
   - `action: "delete"` + `asset_type` to remove old assets.
 - If user says "use this intro/outro on future videos", upload via `studio_assets` first, then ensure brand defaults are configured with `studio_brand`.
+
+## Watch Mode
+
+Watch mode monitors YouTube or Twitch channels for new videos and auto-processes them through Studio.
+
+### Setting up a watcher
+
+1. Run `studio_watch` with `action: "add"` and the channel `url` (e.g. `https://youtube.com/@username`).
+2. Optionally set `preset`, `max_duration_minutes`, `max_daily_uploads`, and `poll_interval_minutes`.
+3. The watcher is saved and ready. Run `studio_watch` with `action: "check"` to poll for new videos.
+
+Only channel/user URLs are accepted, not individual video URLs.
+
+### How check works
+
+`action: "check"` does a single poll cycle:
+- Lists recent videos from each enabled watcher's channel via yt-dlp.
+- Filters out already-processed videos (tracked by video ID).
+- Filters out videos exceeding `max_duration_minutes`.
+- Respects the `max_daily_uploads` cap per watcher.
+- Downloads and uploads each new video to Studio with the watcher's preset.
+- Returns a summary of what was processed.
+
+Pass `id` to check a specific watcher, or omit to check all enabled watchers.
+
+### Managing watchers
+
+- `action: "list"` — show all watchers and their status.
+- `action: "status"` with `id` — detailed status for one watcher.
+- `action: "pause"` / `action: "resume"` with `id` — disable/enable a watcher.
+- `action: "remove"` with `id` — delete a watcher.
+
+### Automation
+
+Run `studio_watch` with `action: "check"` on a schedule. Examples:
+- Have your AI agent call it periodically.
+- Use a system cron job: `*/30 * * * * node /path/to/check-watchers.mjs`
+- Use a simple loop script with a sleep interval.
+
+### Content rights
+
+Only watch channels you own or have explicit permission to process. This aligns with the existing guardrail about respecting user rights and content ownership.
 
 ## Environment Variables
 

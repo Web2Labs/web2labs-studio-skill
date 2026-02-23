@@ -16,7 +16,7 @@
 <p align="center">
   <img src="https://img.shields.io/badge/OpenClaw-skill-blue?style=flat-square" alt="OpenClaw Skill" />
   <img src="https://img.shields.io/badge/node-%3E%3D18-brightgreen?style=flat-square" alt="Node.js 18+" />
-  <img src="https://img.shields.io/badge/tools-19-orange?style=flat-square" alt="19 MCP Tools" />
+  <img src="https://img.shields.io/badge/tools-20-orange?style=flat-square" alt="20 MCP Tools" />
   <img src="https://img.shields.io/badge/license-MIT-green?style=flat-square" alt="MIT License" />
 </p>
 
@@ -197,7 +197,7 @@ Mix presets with custom overrides for full control:
 
 ---
 
-## 19 Tools at Your Fingertips
+## 20 Tools at Your Fingertips
 
 <details>
 <summary><strong>Core Workflow</strong></summary>
@@ -212,6 +212,7 @@ Mix presets with custom overrides for full control:
 | `studio_download` | Download all outputs to your local filesystem |
 | `studio_projects` | List your recent projects |
 | `studio_delete` | Delete a project and free up storage |
+| `studio_watch` | Watch YouTube/Twitch channels and auto-process new uploads |
 
 </details>
 
@@ -319,6 +320,31 @@ Agent: Re-rendering with subtitles enabled. First re-render is free!
        No re-upload needed - reusing existing analysis.
 ```
 
+### Watch Mode - Auto-Process New Uploads
+
+Set up a watcher on your channel and Studio processes every new upload automatically:
+
+```
+You:   "Watch my YouTube channel https://youtube.com/@mychannel for new videos"
+Agent: Watcher created for 'mychannel' with youtube preset.
+       Max 5 uploads/day, skipping videos over 2 hours.
+       
+       Run "check my watchers" to poll for new videos, or set up a cron job.
+```
+
+```
+You:   "Check my watchers"
+Agent: Checking 1 watcher...
+       
+       mychannel: 2 new videos found
+       ├── "Building a REST API" (24:31) → project p_abc123, uploading...
+       └── "React Server Components" (18:07) → project p_def456, uploading...
+       
+       2 videos uploaded and processing. Use studio_poll to track progress.
+```
+
+Works with YouTube channels, YouTube live VODs, and Twitch channels. Requires `yt-dlp`.
+
 ---
 
 ## Spend Control
@@ -327,9 +353,9 @@ You're always in control of what gets spent. Configure your spend policy:
 
 | Mode | Behavior |
 |------|----------|
-| `smart` (default) | Confirms only high-cost or low-balance actions |
+| `auto` (default) | Proceeds without prompts unless auto-caps are exceeded |
+| `smart` | Confirms high-cost or low-balance actions |
 | `explicit` | Confirms every credit-spending action |
-| `auto` | Proceeds without prompts (with configurable caps) |
 
 ```bash
 # Set in your environment
@@ -342,7 +368,7 @@ export WEB2LABS_SPEND_POLICY=explicit
 
 - **Node.js 18+**
 - **Web2Labs account** - [sign up free](https://www.web2labs.com/openclaw) (2 free credits, no card)
-- **Optional:** `yt-dlp` for URL-based workflows (`brew install yt-dlp`)
+- **Optional:** `yt-dlp` for URL-based workflows and watch mode (`brew install yt-dlp`)
 
 ---
 
@@ -356,7 +382,7 @@ The skill reads from environment variables or OpenClaw config (`~/.openclaw/open
 | `WEB2LABS_API_ENDPOINT` | `https://www.web2labs.com` | API base URL |
 | `WEB2LABS_DEFAULT_PRESET` | `youtube` | Default preset when none specified |
 | `WEB2LABS_DOWNLOAD_DIR` | `~/studio-exports` | Where downloads are saved |
-| `WEB2LABS_SPEND_POLICY` | `smart` | Spend confirmation mode |
+| `WEB2LABS_SPEND_POLICY` | `auto` | Spend confirmation mode |
 
 ---
 
