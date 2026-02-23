@@ -90,6 +90,16 @@ export class StudioApiClient {
     return Math.min(8000, Math.pow(2, attempt) * 1000)
   }
 
+  shouldAttachAuth(url) {
+    try {
+      const target = new URL(url)
+      const origin = new URL(this.baseUrl)
+      return target.host === origin.host
+    } catch {
+      return true
+    }
+  }
+
   normalizeHeaders(inputHeaders = {}) {
     const headers = { ...inputHeaders }
     if (!headers["User-Agent"] && !headers["user-agent"]) {
@@ -112,7 +122,7 @@ export class StudioApiClient {
   }
 
   isRetryableStatus(status) {
-    return status >= 500 || status === 429
+    return status >= 500
   }
 
   async request(method, pathname, options = {}) {
@@ -125,8 +135,9 @@ export class StudioApiClient {
       const timer = setTimeout(() => controller.abort(), timeoutMs)
 
       try {
+        const authHeaders = this.shouldAttachAuth(url) ? this.getAuthHeaders() : {}
         const headers = {
-          ...this.getAuthHeaders(),
+          ...authHeaders,
           ...this.normalizeHeaders(options.headers || {}),
         }
 

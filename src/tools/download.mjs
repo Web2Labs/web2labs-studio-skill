@@ -1,6 +1,6 @@
 import { mkdir } from "node:fs/promises"
 import { homedir } from "node:os"
-import { join } from "node:path"
+import { basename, join } from "node:path"
 import { NextSteps } from "../lib/next-steps.mjs"
 
 export class DownloadTool {
@@ -22,6 +22,13 @@ export class DownloadTool {
       .slice(0, 120)
   }
 
+  static safeFilename(name, fallback) {
+    const base = basename(String(name || ""))
+    const cleaned = base.replace(/[<>:"/\\|?*\x00-\x1F]+/g, "-").slice(0, 200)
+    if (!cleaned || cleaned === "." || cleaned === "..") return fallback
+    return cleaned
+  }
+
   static isTypeEnabled(requested, candidate) {
     if (requested.includes("all")) {
       return true
@@ -33,20 +40,22 @@ export class DownloadTool {
     const artifacts = []
 
     if (results.mainVideo?.url && DownloadTool.isTypeEnabled(requestedTypes, "main")) {
+      const fallbackMain = `${results.name || "project"}.mp4`
       artifacts.push({
         kind: "main",
         url: results.mainVideo.url,
-        fileName: results.mainVideo.filename || `${results.name || "project"}.mp4`,
+        fileName: DownloadTool.safeFilename(results.mainVideo.filename, fallbackMain),
       })
     }
 
     if (Array.isArray(results.shorts) && DownloadTool.isTypeEnabled(requestedTypes, "shorts")) {
       for (let i = 0; i < results.shorts.length; i++) {
         const short = results.shorts[i]
+        const fallbackShort = `${results.name || "project"}-short-${i + 1}.mp4`
         artifacts.push({
           kind: "shorts",
           url: short.url,
-          fileName: short.filename || `${results.name || "project"}-short-${i + 1}.mp4`,
+          fileName: DownloadTool.safeFilename(short.filename, fallbackShort),
         })
       }
     }
@@ -70,7 +79,11 @@ export class DownloadTool {
     if (DownloadTool.isTypeEnabled(requestedTypes, "timeline-edl")) {
       const edl = (results.timelineExports || []).find((item) => item.format === "edl")
       if (edl?.url) {
-        artifacts.push({ kind: "timeline-edl", url: edl.url, fileName: edl.filename || "timeline.edl" })
+        artifacts.push({
+          kind: "timeline-edl",
+          url: edl.url,
+          fileName: DownloadTool.safeFilename(edl.filename, "timeline.edl"),
+        })
       }
     }
 
@@ -80,7 +93,7 @@ export class DownloadTool {
         artifacts.push({
           kind: "timeline-fcpxml",
           url: fcpxml.url,
-          fileName: fcpxml.filename || "timeline.fcpxml",
+          fileName: DownloadTool.safeFilename(fcpxml.filename, "timeline.fcpxml"),
         })
       }
     }
@@ -88,7 +101,11 @@ export class DownloadTool {
     if (DownloadTool.isTypeEnabled(requestedTypes, "timeline-xml")) {
       const xml = (results.timelineExports || []).find((item) => item.format === "premiere-xml")
       if (xml?.url) {
-        artifacts.push({ kind: "timeline-xml", url: xml.url, fileName: xml.filename || "timeline.xml" })
+        artifacts.push({
+          kind: "timeline-xml",
+          url: xml.url,
+          fileName: DownloadTool.safeFilename(xml.filename, "timeline.xml"),
+        })
       }
     }
 

@@ -389,10 +389,20 @@ The skill reads from environment variables or OpenClaw config (`~/.openclaw/open
 ## Security
 
 - API keys are stored locally in your OpenClaw config - never sent to third parties
+- Auth headers are stripped for non-Web2Labs download URLs - no credential leakage to CDN/S3
 - The skill never logs or displays full API key values
 - URL downloads happen locally on your machine via yt-dlp - files never touch third-party servers
 - All API communication uses HTTPS
 - Webhook callbacks are HMAC-SHA256 signed with your secret
+- Remote filenames are sanitized to prevent path traversal
+
+For the full security posture and vulnerability reporting, see [SECURITY.md](SECURITY.md).
+
+---
+
+## Contributing
+
+See [CONTRIBUTING.md](CONTRIBUTING.md) for development setup, testing, and pull request guidelines.
 
 ---
 

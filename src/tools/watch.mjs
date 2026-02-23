@@ -146,10 +146,10 @@ export class WatchTool {
       const download = await VideoDownloader.download(videoUrl)
       tmpDir = download.tmpDir
 
-      const configuration = PresetCatalog.resolvePreset(watcher.preset)
-      if (watcher.configuration && typeof watcher.configuration === "object") {
-        Object.assign(configuration, watcher.configuration)
-      }
+      const configuration = PresetCatalog.mergeConfigurations(
+        PresetCatalog.resolvePreset(watcher.preset),
+        watcher.configuration
+      )
 
       const result = await context.apiClient.uploadProject(download.filePath, {
         name: video.title || basename(download.filePath),

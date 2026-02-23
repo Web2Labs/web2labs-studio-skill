@@ -1,17 +1,7 @@
 ---
 name: web2labs-studio
 description: Edit my recording, turn a long video into shorts, generate captions and thumbnails, estimate cost before processing. Upload local files or YouTube/Twitch URLs and get back edited jump-cut videos, vertical shorts, subtitles, and thumbnail variants.
-metadata:
-  {
-    "openclaw": {
-      "emoji": "video",
-      "homepage": "https://web2labs.com/openclaw",
-      "primaryEnv": "WEB2LABS_API_KEY",
-      "requires": {
-        "anyBins": ["node"]
-      }
-    }
-  }
+metadata: {"openclaw":{"emoji":"video","homepage":"https://web2labs.com/openclaw","primaryEnv":"WEB2LABS_API_KEY","skillKey":"@web2labs/studio","requires":{"anyBins":["node"]}}}
 ---
 
 # Web2Labs Studio
@@ -202,6 +192,12 @@ Only watch channels you own or have explicit permission to process. This aligns 
 - `WEB2LABS_SPEND_POLICY`: Spend confirmation policy (`smart`, `explicit`, `auto`).
 - `WEB2LABS_TEST_MODE`: Set to `true` to target the test instance (`https://test.web2labs.com`). Changes the default API endpoint and enables test-mode behavior.
 - `WEB2LABS_BASIC_AUTH`: HTTP Basic Auth credentials in `user:password` format. Required when the target instance is behind HTTP Basic Auth (e.g. the test instance).
+
+### Sandbox mode
+
+When OpenClaw runs in sandbox mode, tool processes execute inside Docker and do **not** inherit host `process.env`. Environment variables set via `skills.entries.@web2labs/studio.env` in `~/.openclaw/openclaw.json` are only injected in host mode.
+
+For sandbox sessions, configure environment variables through the sandbox environment configuration or a custom Docker image. Alternatively, use `studio_setup` with `action: "save_api_key"` after starting the session — the key is written to a config file inside the container.
 
 ## Test Mode
 
