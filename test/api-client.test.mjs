@@ -201,12 +201,12 @@ test("parseResponse returns raw string for invalid JSON", async () => {
 
 // --- isRetryableStatus ---
 
-test("isRetryableStatus returns true for 5xx and 429", () => {
+test("isRetryableStatus returns true for 5xx (429 has dedicated handling)", () => {
   const client = new StudioApiClient({ apiEndpoint: "https://example.com" })
   assert.equal(client.isRetryableStatus(500), true)
   assert.equal(client.isRetryableStatus(502), true)
   assert.equal(client.isRetryableStatus(503), true)
-  assert.equal(client.isRetryableStatus(429), true)
+  assert.equal(client.isRetryableStatus(429), false)
   assert.equal(client.isRetryableStatus(400), false)
   assert.equal(client.isRetryableStatus(401), false)
   assert.equal(client.isRetryableStatus(404), false)

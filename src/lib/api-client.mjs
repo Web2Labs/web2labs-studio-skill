@@ -109,7 +109,7 @@ export class StudioApiClient {
   }
 
   isRetryableStatus(status) {
-    return status >= 500 || status === 429
+    return status >= 500
   }
 
   async request(method, pathname, options = {}) {
@@ -211,7 +211,10 @@ export class StudioApiClient {
   }
 
   async getSocketToken() {
-    return this.request("POST", "/api/auth/socket")
+    return this.request("POST", "/api/auth/socket", {
+      body: JSON.stringify({}),
+      headers: { "Content-Type": "application/json" },
+    })
   }
 
   async getCredits() {
@@ -325,19 +328,19 @@ export class StudioApiClient {
   }
 
   async getProjectStatus(projectId) {
-    return this.request("GET", `/projects/${projectId}/status`)
+    return this.request("GET", `/projects/${encodeURIComponent(projectId)}/status`)
   }
 
   async getProjectResults(projectId) {
-    return this.request("GET", `/projects/${projectId}/results`)
+    return this.request("GET", `/projects/${encodeURIComponent(projectId)}/results`)
   }
 
   async listProjectThumbnails(projectId) {
-    return this.request("GET", `/projects/${projectId}/thumbnails`)
+    return this.request("GET", `/projects/${encodeURIComponent(projectId)}/thumbnails`)
   }
 
   async generateProjectThumbnails(projectId, options = {}) {
-    return this.request("POST", `/projects/${projectId}/thumbnails/generate`, {
+    return this.request("POST", `/projects/${encodeURIComponent(projectId)}/thumbnails/generate`, {
       body: JSON.stringify(options || {}),
       headers: {
         "Content-Type": "application/json",
@@ -346,7 +349,7 @@ export class StudioApiClient {
   }
 
   async rerenderProject(projectId, configuration = {}) {
-    return this.request("POST", `/projects/${projectId}/rerender`, {
+    return this.request("POST", `/projects/${encodeURIComponent(projectId)}/rerender`, {
       body: JSON.stringify({ configuration }),
       headers: {
         "Content-Type": "application/json",
@@ -359,7 +362,7 @@ export class StudioApiClient {
   }
 
   async deleteProject(projectId) {
-    return this.request("DELETE", `/projects/${projectId}`)
+    return this.request("DELETE", `/projects/${encodeURIComponent(projectId)}`)
   }
 
   async submitFeedback(payload, headers = {}) {
@@ -381,7 +384,7 @@ export class StudioApiClient {
   }
 
   async getFeedback(feedbackId) {
-    return this.request("GET", `/feedback/${feedbackId}`)
+    return this.request("GET", `/feedback/${encodeURIComponent(feedbackId)}`)
   }
 
   async getReferral() {
@@ -398,10 +401,9 @@ export class StudioApiClient {
   }
 
   async downloadFile(urlOrPath, destinationPath) {
-    const url = this.resolveUrl(urlOrPath)
     await mkdir(dirname(destinationPath), { recursive: true })
 
-    const response = await this.request("GET", url, {
+    const response = await this.request("GET", urlOrPath, {
       raw: true,
       timeoutMs: 5 * 60 * 1000,
     })
@@ -411,7 +413,7 @@ export class StudioApiClient {
 
     return {
       path: destinationPath,
-      url,
+      url: urlOrPath,
     }
   }
 

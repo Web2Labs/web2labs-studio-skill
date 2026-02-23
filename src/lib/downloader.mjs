@@ -73,6 +73,7 @@ export class VideoDownloader {
 
   static async download(url, options = {}) {
     const tmpPath = await mkdtemp(join(tmpdir(), "w2l-dl-"))
+    try {
     const outputTemplate = join(tmpPath, "%(title)s.%(ext)s")
 
     const args = [
@@ -130,6 +131,11 @@ export class VideoDownloader {
       tmpDir: tmpPath,
       fileSize: Number(fileStats.size || 0),
       fileName: basename(filePath),
+    }
+    } catch (err) {
+      // Attach tmpDir to error so callers can clean up
+      err.tmpDir = tmpPath
+      throw err
     }
   }
 

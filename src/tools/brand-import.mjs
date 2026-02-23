@@ -18,7 +18,7 @@ export class BrandImportTool {
       throw new Error("URL must start with http:// or https://")
     }
 
-    const apply = this.normalizeApply(params.apply)
+    const apply = BrandImportTool.normalizeApply(params.apply)
     const result = await context.apiClient.importBrand({
       url,
       apply,

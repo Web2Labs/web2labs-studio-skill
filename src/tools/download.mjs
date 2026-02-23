@@ -4,6 +4,9 @@ import { join } from "node:path"
 
 export class DownloadTool {
   static expandHome(pathValue) {
+    if (pathValue === "~") {
+      return homedir()
+    }
     if (pathValue.startsWith("~/")) {
       return join(homedir(), pathValue.slice(2))
     }
@@ -37,11 +40,12 @@ export class DownloadTool {
     }
 
     if (Array.isArray(results.shorts) && DownloadTool.isTypeEnabled(requestedTypes, "shorts")) {
-      for (const short of results.shorts) {
+      for (let i = 0; i < results.shorts.length; i++) {
+        const short = results.shorts[i]
         artifacts.push({
           kind: "shorts",
           url: short.url,
-          fileName: short.filename || `${results.name || "project"}-short.mp4`,
+          fileName: short.filename || `${results.name || "project"}-short-${i + 1}.mp4`,
         })
       }
     }

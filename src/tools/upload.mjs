@@ -87,7 +87,13 @@ export class UploadTool {
         }
 
         sourceInfo = await VideoDownloader.getVideoInfo(sourceInput)
-        const download = await VideoDownloader.download(sourceInput)
+        let download
+        try {
+          download = await VideoDownloader.download(sourceInput)
+        } catch (dlErr) {
+          tmpDir = dlErr.tmpDir || null
+          throw dlErr
+        }
         localFilePath = download.filePath
         tmpDir = download.tmpDir
         downloadedFromUrl = true

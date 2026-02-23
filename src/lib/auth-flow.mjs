@@ -166,11 +166,9 @@ export class AuthFlow {
   }
 
   static async generateApiKey(apiEndpoint, accessToken, basicAuth = null) {
+    // Bearer token goes in Authorization header; Basic Auth is intentionally
+    // omitted here — the server endpoint should not require it.
     const normalizedEndpoint = AuthFlow.normalizeApiEndpoint(apiEndpoint)
-    // When basic auth is set, both Basic and Bearer need the Authorization
-    // header. HTTP only allows one, so we prefer Bearer (required by the app)
-    // and skip basic auth here. For test instances behind HTTP basic auth,
-    // generate the API key via the web UI and use `save_api_key` instead.
     const { response, payload } = await AuthFlow.requestJson(
       `${normalizedEndpoint}/api/user/api-key/generate`,
       {
@@ -214,8 +212,22 @@ export class AuthFlow {
     try {
       const raw = await readFile(configPath, "utf-8")
       config = JSON.parse(raw)
-    } catch {
-      await mkdir(configDir, { recursive: true })
+    } catch (err) {
+      if (err?.code === "ENOENT") {
+        await mkdir(configDir, { recursive: true })
+      } else if (err instanceof SyntaxError) {
+        throw new AuthFlowError(
+          `Config file ${configPath} contains invalid JSON. Please fix or delete it manually.`,
+          "config_corrupt",
+          500
+        )
+      } else {
+        throw new AuthFlowError(
+          `Unable to read config file ${configPath}: ${err?.message || err}`,
+          "config_read_error",
+          500
+        )
+      }
     }
 
     if (!config.skills) {
