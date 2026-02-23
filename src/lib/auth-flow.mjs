@@ -168,6 +168,8 @@ export class AuthFlow {
   static async generateApiKey(apiEndpoint, accessToken, basicAuth = null) {
     // Bearer token goes in Authorization header; Basic Auth is intentionally
     // omitted here — the server endpoint should not require it.
+    // regenerateIfExists: if the user already has an API key, revoke it and
+    // create a new one instead of returning a key_already_exists error.
     const normalizedEndpoint = AuthFlow.normalizeApiEndpoint(apiEndpoint)
     const { response, payload } = await AuthFlow.requestJson(
       `${normalizedEndpoint}/api/user/api-key/generate`,
@@ -177,6 +179,7 @@ export class AuthFlow {
           "Content-Type": "application/json",
           Authorization: `Bearer ${accessToken}`,
         },
+        body: JSON.stringify({ regenerateIfExists: true }),
       }
     )
     if (!response.ok) {

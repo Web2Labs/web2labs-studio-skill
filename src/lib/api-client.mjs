@@ -1,9 +1,12 @@
 import FormData from "form-data"
 import fetch from "node-fetch"
 import { createReadStream, createWriteStream } from "node:fs"
-import { access, mkdir } from "node:fs/promises"
-import { dirname, isAbsolute, join } from "node:path"
+import { access, mkdir, open, stat } from "node:fs/promises"
+import { basename, dirname, isAbsolute, join } from "node:path"
 import { pipeline } from "node:stream/promises"
+
+const CHUNK_SIZE = 50 * 1024 * 1024 // 50 MB
+const CHUNKED_THRESHOLD = 95 * 1024 * 1024 // 95 MB
 
 export class StudioApiError extends Error {
   constructor(message, code = "api_error", status = 500, details = null) {
@@ -109,7 +112,7 @@ export class StudioApiClient {
   }
 
   isRetryableStatus(status) {
-    return status >= 500
+    return status >= 500 || status === 429
   }
 
   async request(method, pathname, options = {}) {
@@ -301,6 +304,12 @@ export class StudioApiClient {
   async uploadProject(filePath, options = {}) {
     await access(filePath)
 
+    // Auto-detect large files and use chunked upload
+    const fileInfo = await stat(filePath)
+    if (fileInfo.size > CHUNKED_THRESHOLD) {
+      return this.uploadProjectChunked(filePath, options)
+    }
+
     const form = new FormData()
     form.append("file", createReadStream(filePath))
 
@@ -325,6 +334,81 @@ export class StudioApiClient {
       headers: form.getHeaders(),
       timeoutMs: 10 * 60 * 1000,
     })
+  }
+
+  async uploadProjectChunked(filePath, options = {}) {
+    await access(filePath)
+    const fileInfo = await stat(filePath)
+    const fileName = basename(filePath)
+    const totalChunks = Math.ceil(fileInfo.size / CHUNK_SIZE)
+
+    // 1. Initialise the session
+    const initPayload = {
+      fileName,
+      totalChunks,
+    }
+    if (options.name) initPayload.name = options.name
+    if (typeof options.configuration !== "undefined") {
+      initPayload.configuration = options.configuration
+    }
+    if (options.priority) initPayload.priority = String(options.priority)
+    if (options.webhookUrl) initPayload.webhookUrl = String(options.webhookUrl)
+    if (options.webhookSecret) initPayload.webhookSecret = String(options.webhookSecret)
+
+    const initResult = await this.request("POST", "/projects/upload/init", {
+      body: JSON.stringify(initPayload),
+      headers: { "Content-Type": "application/json" },
+      timeoutMs: 60 * 1000,
+    })
+
+    const projectId = initResult.projectId
+    if (!projectId) {
+      throw new StudioApiError(
+        "uploadInit did not return a projectId",
+        "init_failed",
+        500
+      )
+    }
+
+    // 2. Send each chunk
+    const fh = await open(filePath, "r")
+    try {
+      for (let i = 0; i < totalChunks; i++) {
+        const start = i * CHUNK_SIZE
+        const end = Math.min(start + CHUNK_SIZE, fileInfo.size)
+        const chunkStream = createReadStream(filePath, { start, end: end - 1 })
+
+        const form = new FormData()
+        form.append("chunk", chunkStream, {
+          filename: fileName,
+          knownLength: end - start,
+        })
+        form.append("chunkIndex", String(i))
+        form.append("totalChunks", String(totalChunks))
+        form.append("fileName", fileName)
+
+        await this.request(
+          "POST",
+          `/projects/${encodeURIComponent(projectId)}/upload/chunk`,
+          {
+            body: form,
+            headers: form.getHeaders(),
+            timeoutMs: 10 * 60 * 1000,
+          }
+        )
+      }
+    } finally {
+      await fh.close()
+    }
+
+    return {
+      projectId,
+      status: "Uploading",
+      name: initResult.name || options.name || "API Upload",
+      pollUrl: `/api/v1/projects/${projectId}/status`,
+      message:
+        "Upload initiated. Poll the status endpoint to track progress.",
+    }
   }
 
   async getProjectStatus(projectId) {
