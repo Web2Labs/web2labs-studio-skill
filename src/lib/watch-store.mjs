@@ -3,7 +3,8 @@ import { randomBytes } from "node:crypto"
 import { homedir } from "node:os"
 import { dirname, join } from "node:path"
 
-const MAX_PROCESSED_IDS = 50
+const MAX_PROCESSED_IDS = 500
+const MAX_RETRIES = 3
 
 export class WatchStore {
   static getStorePath() {
@@ -102,6 +103,7 @@ export class WatchStore {
       enabled: true,
       lastChecked: null,
       lastProcessedIds: [],
+      failedVideos: [],
       uploadsToday: 0,
       uploadsTodayDate: null,
       createdAt: new Date().toISOString(),
@@ -175,10 +177,52 @@ export class WatchStore {
 
   static filterNewVideos(watcher, videos) {
     const processed = new Set(watcher.lastProcessedIds || [])
+    const failedIds = new Set((watcher.failedVideos || []).map((f) => f.id))
     return videos.filter((v) => {
       if (processed.has(v.id)) return false
+      if (failedIds.has(v.id)) return false
       if (watcher.maxDurationMinutes && v.duration > watcher.maxDurationMinutes * 60) return false
       return true
     })
+  }
+
+  static getRetryableVideos(watcher) {
+    return (watcher.failedVideos || []).filter((f) => f.attempts < MAX_RETRIES)
+  }
+
+  static async markFailed(id, videoId, title) {
+    const watchers = await WatchStore.load()
+    const watcher = watchers.find((w) => w.id === id)
+    if (!watcher) return null
+
+    if (!Array.isArray(watcher.failedVideos)) {
+      watcher.failedVideos = []
+    }
+
+    const existing = watcher.failedVideos.find((f) => f.id === videoId)
+    if (existing) {
+      existing.attempts += 1
+      existing.lastAttempt = new Date().toISOString()
+    } else {
+      watcher.failedVideos.push({
+        id: videoId,
+        title: title || videoId,
+        attempts: 1,
+        lastAttempt: new Date().toISOString(),
+      })
+    }
+
+    await WatchStore.save(watchers)
+    return watcher
+  }
+
+  static async clearFailed(id, videoId) {
+    const watchers = await WatchStore.load()
+    const watcher = watchers.find((w) => w.id === id)
+    if (!watcher || !Array.isArray(watcher.failedVideos)) return null
+
+    watcher.failedVideos = watcher.failedVideos.filter((f) => f.id !== videoId)
+    await WatchStore.save(watchers)
+    return watcher
   }
 }

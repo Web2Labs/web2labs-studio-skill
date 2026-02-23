@@ -1,3 +1,4 @@
+import { NextSteps } from "../lib/next-steps.mjs"
 import { PurchaseLinks } from "../lib/purchase-links.mjs"
 
 export class CreditsTool {
@@ -101,6 +102,7 @@ export class CreditsTool {
         alerts,
         purchaseLinks,
       },
+      next_steps: NextSteps.forCredits(credits),
     }
   }
 }

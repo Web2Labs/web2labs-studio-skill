@@ -1,6 +1,15 @@
 import { AuthFlow, AuthFlowError } from "../lib/auth-flow.mjs"
+import { VideoDownloader } from "../lib/downloader.mjs"
 
 export class SetupTool {
+  static TRUST_INFO = {
+    data_retention: "Uploads deleted after processing (free: 2h, paid: per plan)",
+    training: "Your content is never used for AI training",
+    api_key_storage: "Stored locally in ~/.openclaw/openclaw.json (chmod 600)",
+    communication: "All API calls use HTTPS",
+    url_downloads: "Downloaded locally via yt-dlp, never routed through third parties",
+  }
+
   static normalizeAction(value) {
     return String(value || "send_magic_link")
       .trim()
@@ -20,6 +29,46 @@ export class SetupTool {
       return `${key.slice(0, 2)}***`
     }
     return `${key.slice(0, 8)}...${key.slice(-4)}`
+  }
+
+  static async checkDependencies() {
+    const nodeVersion = process.version
+    const nodeMajor = Number((nodeVersion.match(/^v(\d+)/) || [])[1] || 0)
+
+    const ytdlp = await VideoDownloader.checkYtDlp().catch(() => ({
+      installed: false,
+      version: null,
+    }))
+
+    const issues = []
+    if (nodeMajor < 18) {
+      issues.push(`Node.js ${nodeVersion} detected — version 18+ is required.`)
+    }
+    if (!ytdlp.installed) {
+      issues.push(
+        "yt-dlp is not installed. URL-based workflows and watch mode require it. Install with: brew install yt-dlp (macOS), pip install yt-dlp (Linux), winget install yt-dlp (Windows)."
+      )
+    }
+
+    return {
+      node: { version: nodeVersion, supported: nodeMajor >= 18 },
+      ytdlp: { installed: ytdlp.installed, version: ytdlp.version },
+      ready: issues.length === 0,
+      issues,
+    }
+  }
+
+  static async fetchCreditSummary(apiClient) {
+    try {
+      const credits = await apiClient.getCredits()
+      return {
+        apiCredits: credits?.apiCredits?.total ?? credits?.total ?? null,
+        creatorCredits: credits?.creatorCredits?.total ?? null,
+        subscription: credits?.subscription?.tier ?? null,
+      }
+    } catch {
+      return null
+    }
   }
 
   static assertEmail(email) {
@@ -72,9 +121,13 @@ export class SetupTool {
     )
     const storeResult = await AuthFlow.storeApiKey(keyResult.key)
 
-    // Use the newly generated key immediately for subsequent tool calls.
     context.apiClient.setApiKey(keyResult.key)
     context.apiClient.setBearerToken(null)
+
+    const [dependencies, creditSummary] = await Promise.all([
+      SetupTool.checkDependencies(),
+      SetupTool.fetchCreditSummary(context.apiClient),
+    ])
 
     return {
       action: "complete_setup",
@@ -86,6 +139,21 @@ export class SetupTool {
       configPath: storeResult.path,
       message:
         "Setup complete. Your API key was generated and saved to your OpenClaw config.",
+      dependencies,
+      credits: creditSummary,
+      trust: SetupTool.TRUST_INFO,
+      next_steps: [
+        {
+          tool: "studio_estimate",
+          message:
+            "Run studio_estimate before your first upload to preview costs.",
+        },
+        {
+          tool: "studio_upload",
+          message:
+            "Upload your first video with studio_upload — 2 free credits included, no credit card needed.",
+        },
+      ],
     }
   }
 
@@ -103,12 +171,32 @@ export class SetupTool {
     context.apiClient.setApiKey(normalized)
     context.apiClient.setBearerToken(null)
 
+    const [dependencies, creditSummary] = await Promise.all([
+      SetupTool.checkDependencies(),
+      SetupTool.fetchCreditSummary(context.apiClient),
+    ])
+
     return {
       action: "save_api_key",
       configured: true,
       apiKeyPrefix: SetupTool.maskApiKey(normalized),
       configPath: storeResult.path,
       message: "API key saved to OpenClaw config.",
+      dependencies,
+      credits: creditSummary,
+      trust: SetupTool.TRUST_INFO,
+      next_steps: [
+        {
+          tool: "studio_estimate",
+          message:
+            "Run studio_estimate before your first upload to preview costs.",
+        },
+        {
+          tool: "studio_upload",
+          message:
+            "Upload a video with studio_upload to get started.",
+        },
+      ],
     }
   }
 

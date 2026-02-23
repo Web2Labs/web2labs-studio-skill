@@ -104,14 +104,14 @@ test("WatchStore.markProcessed tracks video IDs and updates timestamp", async ()
   assert.equal(updated.uploadsToday, 2)
 })
 
-test("WatchStore.markProcessed caps lastProcessedIds at 50", async () => {
+test("WatchStore.markProcessed caps lastProcessedIds at 500", async () => {
   const watchers = await WatchStore.list()
   const watcher = watchers.find((w) => w.label === "marktest")
 
-  const manyIds = Array.from({ length: 60 }, (_, i) => `batch_${i}`)
+  const manyIds = Array.from({ length: 520 }, (_, i) => `batch_${i}`)
   const updated = await WatchStore.markProcessed(watcher.id, manyIds)
-  assert.equal(updated.lastProcessedIds.length, 50)
-  assert.equal(updated.lastProcessedIds[49], "batch_59")
+  assert.equal(updated.lastProcessedIds.length, 500)
+  assert.equal(updated.lastProcessedIds[499], "batch_519")
 })
 
 test("WatchStore.filterNewVideos excludes processed IDs", () => {

@@ -1,6 +1,7 @@
 import { mkdir } from "node:fs/promises"
 import { homedir } from "node:os"
 import { join } from "node:path"
+import { NextSteps } from "../lib/next-steps.mjs"
 
 export class DownloadTool {
   static expandHome(pathValue) {
@@ -146,6 +147,7 @@ export class DownloadTool {
       outputDir,
       downloaded,
       retentionTimeRemaining: results.retentionTimeRemaining || null,
+      next_steps: NextSteps.forDownload(results),
     }
   }
 }

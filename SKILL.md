@@ -1,6 +1,6 @@
 ---
 name: web2labs-studio
-description: AI-powered video editing - upload raw recordings and get back edited videos, shorts, subtitles, and thumbnails. Supports local files and YouTube/Twitch URLs.
+description: Edit my recording, turn a long video into shorts, generate captions and thumbnails, estimate cost before processing. Upload local files or YouTube/Twitch URLs and get back edited jump-cut videos, vertical shorts, subtitles, and thumbnail variants.
 metadata:
   {
     "openclaw": {

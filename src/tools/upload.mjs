@@ -1,5 +1,6 @@
 import { access } from "node:fs/promises"
 import { basename, extname } from "node:path"
+import { NextSteps } from "../lib/next-steps.mjs"
 import { SpendPolicyGuard } from "../lib/spend-policy.mjs"
 import { PresetCatalog } from "../lib/presets.mjs"
 import { VideoDownloader } from "../lib/downloader.mjs"
@@ -193,6 +194,7 @@ export class UploadTool {
         },
         downloadedFromUrl,
         sourceUrl: downloadedFromUrl ? sourceInput : null,
+        next_steps: NextSteps.forUpload(Boolean(webhookUrl)),
       }
     } finally {
       if (tmpDir) {

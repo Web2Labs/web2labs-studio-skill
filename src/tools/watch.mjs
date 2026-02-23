@@ -1,7 +1,10 @@
 import { basename } from "node:path"
+import { setTimeout as delay } from "node:timers/promises"
 import { WatchStore } from "../lib/watch-store.mjs"
 import { VideoDownloader } from "../lib/downloader.mjs"
 import { PresetCatalog } from "../lib/presets.mjs"
+
+const INTER_UPLOAD_DELAY_MS = 2500
 
 export class WatchTool {
   static normalizeAction(value) {
@@ -136,6 +139,49 @@ export class WatchTool {
     }
   }
 
+  static async processVideo(context, watcher, video, isRetry) {
+    let tmpDir = null
+    try {
+      const videoUrl = WatchTool.buildVideoUrl(watcher.type, video.id)
+      const download = await VideoDownloader.download(videoUrl)
+      tmpDir = download.tmpDir
+
+      const configuration = PresetCatalog.resolvePreset(watcher.preset)
+      if (watcher.configuration && typeof watcher.configuration === "object") {
+        Object.assign(configuration, watcher.configuration)
+      }
+
+      const result = await context.apiClient.uploadProject(download.filePath, {
+        name: video.title || basename(download.filePath),
+        configuration,
+      })
+
+      if (isRetry) {
+        await WatchStore.clearFailed(watcher.id, video.id)
+      }
+
+      return {
+        videoId: video.id,
+        title: video.title,
+        projectId: result.projectId || result.id,
+        status: result.status || "Uploading",
+        retried: isRetry || undefined,
+      }
+    } catch (err) {
+      await WatchStore.markFailed(watcher.id, video.id, video.title)
+      return {
+        videoId: video.id,
+        title: video.title,
+        error: err?.message || String(err),
+        retried: isRetry || undefined,
+      }
+    } finally {
+      if (tmpDir) {
+        await VideoDownloader.cleanup(tmpDir)
+      }
+    }
+  }
+
   static async executeCheck(context, params) {
     const targetId = String(params.id || "").trim() || null
 
@@ -160,7 +206,7 @@ export class WatchTool {
     const results = []
 
     for (const watcher of watchers) {
-      const remaining = WatchStore.getRemainingUploads(watcher)
+      let remaining = WatchStore.getRemainingUploads(watcher)
       if (remaining <= 0) {
         results.push({
           watcherId: watcher.id,
@@ -169,6 +215,26 @@ export class WatchTool {
           reason: "daily_upload_cap_reached",
         })
         continue
+      }
+
+      const retryable = WatchStore.getRetryableVideos(watcher)
+      const uploads = []
+      const uploadedIds = []
+      let uploadCount = 0
+
+      for (const failed of retryable) {
+        if (remaining <= 0) break
+        if (uploadCount > 0) await delay(INTER_UPLOAD_DELAY_MS)
+
+        const result = await WatchTool.processVideo(
+          context, watcher, { id: failed.id, title: failed.title }, true
+        )
+        uploads.push(result)
+        if (!result.error) {
+          uploadedIds.push(failed.id)
+          remaining -= 1
+        }
+        uploadCount += 1
       }
 
       let videos
@@ -181,13 +247,14 @@ export class WatchTool {
           skipped: true,
           reason: "list_failed",
           error: err?.message || String(err),
+          retried: retryable.length > 0 ? uploads.length : undefined,
         })
         continue
       }
 
       const newVideos = WatchStore.filterNewVideos(watcher, videos).slice(0, remaining)
 
-      if (newVideos.length === 0) {
+      if (newVideos.length === 0 && uploads.length === 0) {
         await WatchStore.update(watcher.id, { lastChecked: new Date().toISOString() })
         results.push({
           watcherId: watcher.id,
@@ -199,44 +266,17 @@ export class WatchTool {
         continue
       }
 
-      const uploadedIds = []
-      const uploads = []
-
       for (const video of newVideos) {
-        let tmpDir = null
-        try {
-          const videoUrl = WatchTool.buildVideoUrl(watcher.type, video.id)
-          const download = await VideoDownloader.download(videoUrl)
-          tmpDir = download.tmpDir
+        if (remaining <= 0) break
+        if (uploadCount > 0) await delay(INTER_UPLOAD_DELAY_MS)
 
-          const configuration = PresetCatalog.resolvePreset(watcher.preset)
-          if (watcher.configuration && typeof watcher.configuration === "object") {
-            Object.assign(configuration, watcher.configuration)
-          }
-
-          const result = await context.apiClient.uploadProject(download.filePath, {
-            name: video.title || basename(download.filePath),
-            configuration,
-          })
-
+        const result = await WatchTool.processVideo(context, watcher, video, false)
+        uploads.push(result)
+        if (!result.error) {
           uploadedIds.push(video.id)
-          uploads.push({
-            videoId: video.id,
-            title: video.title,
-            projectId: result.projectId || result.id,
-            status: result.status || "Uploading",
-          })
-        } catch (err) {
-          uploads.push({
-            videoId: video.id,
-            title: video.title,
-            error: err?.message || String(err),
-          })
-        } finally {
-          if (tmpDir) {
-            await VideoDownloader.cleanup(tmpDir)
-          }
+          remaining -= 1
         }
+        uploadCount += 1
       }
 
       if (uploadedIds.length > 0) {

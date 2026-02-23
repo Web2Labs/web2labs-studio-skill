@@ -1,3 +1,5 @@
+import { NextSteps } from "../lib/next-steps.mjs"
+
 export class ResultsTool {
   static async execute(context, params) {
     const projectId = String(params.project_id || "").trim()
@@ -9,6 +11,7 @@ export class ResultsTool {
     return {
       projectId,
       ...results,
+      next_steps: NextSteps.forResults(results),
     }
   }
 }
