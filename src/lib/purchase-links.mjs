@@ -2,7 +2,7 @@ export class PurchaseLinks {
   static REF_PARAM = "openclaw"
 
   static normalizeBaseUrl(apiEndpoint) {
-    const fallback = "https://web2labs.com"
+    const fallback = "https://www.web2labs.com"
     const raw = String(apiEndpoint || fallback).trim()
     if (!raw) {
       return fallback

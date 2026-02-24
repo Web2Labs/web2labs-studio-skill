@@ -74,66 +74,65 @@ export class VideoDownloader {
   static async download(url, options = {}) {
     const tmpPath = await mkdtemp(join(tmpdir(), "w2l-dl-"))
     try {
-    const outputTemplate = join(tmpPath, "%(title)s.%(ext)s")
+      const outputTemplate = join(tmpPath, "%(title)s.%(ext)s")
 
-    const args = [
-      "-f",
-      "bestvideo[height<=1080]+bestaudio/best[height<=1080]/best",
-      "--merge-output-format",
-      "mp4",
-      "--no-playlist",
-      "--no-overwrites",
-      "--restrict-filenames",
-      "--output",
-      outputTemplate,
-    ]
+      const args = [
+        "-f",
+        "bestvideo[height<=1080]+bestaudio/best[height<=1080]/best",
+        "--merge-output-format",
+        "mp4",
+        "--no-playlist",
+        "--no-overwrites",
+        "--restrict-filenames",
+        "--output",
+        outputTemplate,
+      ]
 
-    if (Number(options.maxDuration) > 0) {
-      args.push("--match-filter", `duration<=${Number(options.maxDuration)}`)
-    }
-
-    args.push(url)
-
-    const { stdout, stderr } = await execFileAsync("yt-dlp", args, {
-      timeout: Number(options.timeout || 600000),
-      maxBuffer: 5 * 1024 * 1024,
-    })
-
-    const fromMerge = stderr.match(/\[Merger\] Merging formats into \"(.+)\"/)
-    const fromExisting = stderr.match(/\[download\] (.+\.mp4) has already been downloaded/)
-    const fromDestination = stdout.match(/\[download\] Destination: (.+)/)
-
-    let filePath = null
-    if (fromMerge?.[1]) {
-      filePath = fromMerge[1]
-    } else if (fromExisting?.[1]) {
-      filePath = fromExisting[1]
-    } else if (fromDestination?.[1]) {
-      filePath = fromDestination[1]
-    }
-
-    if (!filePath) {
-      const candidates = readdirSync(tmpPath)
-        .filter((name) => name.toLowerCase().endsWith(".mp4"))
-        .map((name) => join(tmpPath, name))
-      if (candidates.length > 0) {
-        filePath = candidates[0]
+      if (Number(options.maxDuration) > 0) {
+        args.push("--match-filter", `duration<=${Number(options.maxDuration)}`)
       }
-    }
 
-    if (!filePath) {
-      throw new Error("Download completed but output file was not found")
-    }
+      args.push(url)
 
-    const fileStats = await stat(filePath)
-    return {
-      filePath,
-      tmpDir: tmpPath,
-      fileSize: Number(fileStats.size || 0),
-      fileName: basename(filePath),
-    }
+      const { stdout, stderr } = await execFileAsync("yt-dlp", args, {
+        timeout: Number(options.timeout || 600000),
+        maxBuffer: 5 * 1024 * 1024,
+      })
+
+      const fromMerge = stderr.match(/\[Merger\] Merging formats into \"(.+)\"/)
+      const fromExisting = stderr.match(/\[download\] (.+\.mp4) has already been downloaded/)
+      const fromDestination = stdout.match(/\[download\] Destination: (.+)/)
+
+      let filePath = null
+      if (fromMerge?.[1]) {
+        filePath = fromMerge[1]
+      } else if (fromExisting?.[1]) {
+        filePath = fromExisting[1]
+      } else if (fromDestination?.[1]) {
+        filePath = fromDestination[1]
+      }
+
+      if (!filePath) {
+        const candidates = readdirSync(tmpPath)
+          .filter((name) => name.toLowerCase().endsWith(".mp4"))
+          .map((name) => join(tmpPath, name))
+        if (candidates.length > 0) {
+          filePath = candidates[0]
+        }
+      }
+
+      if (!filePath) {
+        throw new Error("Download completed but output file was not found")
+      }
+
+      const fileStats = await stat(filePath)
+      return {
+        filePath,
+        tmpDir: tmpPath,
+        fileSize: Number(fileStats.size || 0),
+        fileName: basename(filePath),
+      }
     } catch (err) {
-      // Attach tmpDir to error so callers can clean up
       err.tmpDir = tmpPath
       throw err
     }

@@ -1,7 +1,7 @@
 import FormData from "form-data"
 import fetch from "node-fetch"
 import { createReadStream, createWriteStream } from "node:fs"
-import { access, mkdir, open, stat } from "node:fs/promises"
+import { access, mkdir, stat } from "node:fs/promises"
 import { basename, dirname, isAbsolute, join } from "node:path"
 import { pipeline } from "node:stream/promises"
 
@@ -20,14 +20,14 @@ export class StudioApiError extends Error {
 
 export class StudioApiClient {
   constructor(config = {}) {
-    this.baseUrl = (config.apiEndpoint || "https://web2labs.com").replace(/\/$/, "")
+    this.baseUrl = (config.apiEndpoint || "https://www.web2labs.com").replace(/\/$/, "")
     this.apiKey = config.apiKey || null
     this.bearerToken = config.bearerToken || null
     this.basicAuth = config.basicAuth || null
     this.maxRetries = Number.isFinite(Number(config.maxRetries))
       ? Number(config.maxRetries)
       : 3
-    this.userAgent = config.userAgent || "web2labs-openclaw-skill/1.0.0"
+    this.userAgent = config.userAgent || "web2labs-openclaw-skill/1.0.1"
   }
 
   setBearerToken(token) {
@@ -94,7 +94,8 @@ export class StudioApiClient {
     try {
       const target = new URL(url)
       const origin = new URL(this.baseUrl)
-      return target.host === origin.host
+      const stripWww = (h) => h.replace(/^www\./, "")
+      return stripWww(target.host) === stripWww(origin.host)
     } catch {
       return true
     }
@@ -382,34 +383,29 @@ export class StudioApiClient {
     }
 
     // 2. Send each chunk
-    const fh = await open(filePath, "r")
-    try {
-      for (let i = 0; i < totalChunks; i++) {
-        const start = i * CHUNK_SIZE
-        const end = Math.min(start + CHUNK_SIZE, fileInfo.size)
-        const chunkStream = createReadStream(filePath, { start, end: end - 1 })
+    for (let i = 0; i < totalChunks; i++) {
+      const start = i * CHUNK_SIZE
+      const end = Math.min(start + CHUNK_SIZE, fileInfo.size)
+      const chunkStream = createReadStream(filePath, { start, end: end - 1 })
 
-        const form = new FormData()
-        form.append("chunk", chunkStream, {
-          filename: fileName,
-          knownLength: end - start,
-        })
-        form.append("chunkIndex", String(i))
-        form.append("totalChunks", String(totalChunks))
-        form.append("fileName", fileName)
+      const form = new FormData()
+      form.append("chunk", chunkStream, {
+        filename: fileName,
+        knownLength: end - start,
+      })
+      form.append("chunkIndex", String(i))
+      form.append("totalChunks", String(totalChunks))
+      form.append("fileName", fileName)
 
-        await this.request(
-          "POST",
-          `/projects/${encodeURIComponent(projectId)}/upload/chunk`,
-          {
-            body: form,
-            headers: form.getHeaders(),
-            timeoutMs: 10 * 60 * 1000,
-          }
-        )
-      }
-    } finally {
-      await fh.close()
+      await this.request(
+        "POST",
+        `/projects/${encodeURIComponent(projectId)}/upload/chunk`,
+        {
+          body: form,
+          headers: form.getHeaders(),
+          timeoutMs: 10 * 60 * 1000,
+        }
+      )
     }
 
     return {

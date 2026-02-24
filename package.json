@@ -1,6 +1,6 @@
 {
   "name": "@web2labs/studio-skill",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "OpenClaw skill for Web2Labs Studio - AI-powered video editing",
   "type": "module",
   "main": "src/server.mjs",
@@ -11,7 +11,7 @@
     "test:e2e": "node --test ../tests/e2e/*.test.mjs",
     "test:live": "node --test ../tests/live/*.test.mjs",
     "test:hardening": "npm test && npm run test:integration && npm run test:e2e",
-    "lint": "node --check src/server.mjs",
+    "lint": "node --check src/server.mjs src/lib/*.mjs src/tools/*.mjs",
     "sync": "../scripts/sync-skill-repo.sh",
     "publish:clawhub": "../scripts/publish-to-clawhub.sh"
   },

@@ -62,7 +62,7 @@ test("readConfig uses defaults when env vars are absent", () => {
     const server = new StudioSkillServer()
     const config = server.config
 
-    assert.equal(config.apiEndpoint, "https://web2labs.com")
+    assert.equal(config.apiEndpoint, "https://www.web2labs.com")
     assert.equal(config.apiKey, null)
     assert.equal(config.bearerToken, null)
     assert.equal(config.basicAuth, null)
@@ -264,7 +264,7 @@ test("registerTools registers all expected tools", () => {
 
 test("constructor sets skillVersion", () => {
   const server = new StudioSkillServer()
-  assert.equal(server.skillVersion, "1.0.0")
+  assert.equal(server.skillVersion, "1.0.1")
 })
 
 test("constructor creates apiClient", () => {

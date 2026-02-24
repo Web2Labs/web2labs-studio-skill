@@ -17,7 +17,7 @@ export class AuthFlow {
   static DEFAULT_TIMEOUT_MS = 20000
 
   static normalizeApiEndpoint(apiEndpoint) {
-    return String(apiEndpoint || "https://web2labs.com").replace(/\/$/, "")
+    return String(apiEndpoint || "https://www.web2labs.com").replace(/\/$/, "")
   }
 
   static async parsePayload(response) {

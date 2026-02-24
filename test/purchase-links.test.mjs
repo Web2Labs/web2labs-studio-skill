@@ -26,19 +26,19 @@ test("normalizeBaseUrl preserves port", () => {
 })
 
 test("normalizeBaseUrl falls back for empty string", () => {
-  assert.equal(PurchaseLinks.normalizeBaseUrl(""), "https://web2labs.com")
+  assert.equal(PurchaseLinks.normalizeBaseUrl(""), "https://www.web2labs.com")
 })
 
 test("normalizeBaseUrl falls back for null", () => {
-  assert.equal(PurchaseLinks.normalizeBaseUrl(null), "https://web2labs.com")
+  assert.equal(PurchaseLinks.normalizeBaseUrl(null), "https://www.web2labs.com")
 })
 
 test("normalizeBaseUrl falls back for undefined", () => {
-  assert.equal(PurchaseLinks.normalizeBaseUrl(undefined), "https://web2labs.com")
+  assert.equal(PurchaseLinks.normalizeBaseUrl(undefined), "https://www.web2labs.com")
 })
 
 test("normalizeBaseUrl falls back for invalid URL", () => {
-  assert.equal(PurchaseLinks.normalizeBaseUrl("not-a-url"), "https://web2labs.com")
+  assert.equal(PurchaseLinks.normalizeBaseUrl("not-a-url"), "https://www.web2labs.com")
 })
 
 // --- withTracking ---

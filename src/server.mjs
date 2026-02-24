@@ -27,7 +27,7 @@ import { WatchTool } from "./tools/watch.mjs"
 
 export class StudioSkillServer {
   constructor() {
-    this.skillVersion = "1.0.0"
+    this.skillVersion = "1.0.1"
     this.config = this.readConfig()
     this.apiClient = new StudioApiClient({
       apiEndpoint: this.config.apiEndpoint,
@@ -49,7 +49,7 @@ export class StudioSkillServer {
 
     const defaultEndpoint = testMode
       ? "https://test.web2labs.com"
-      : "https://web2labs.com"
+      : "https://www.web2labs.com"
 
     const basicAuth = process.env.WEB2LABS_BASIC_AUTH || null
 
@@ -113,9 +113,6 @@ export class StudioSkillServer {
         const data = await handler(context, params)
         return this.wrapResult(data)
       } catch (error) {
-        if (error instanceof StudioApiError) {
-          return this.wrapError(error)
-        }
         return this.wrapError(error)
       }
     })
@@ -365,6 +362,10 @@ export class StudioSkillServer {
         configuration: z
           .record(z.any())
           .describe("Configuration overrides merged into existing project settings"),
+        confirm_spend: z
+          .boolean()
+          .optional()
+          .describe("Set true after user approval when Creator Credits will be spent (subsequent re-renders cost 15 CC)"),
       },
       RerenderTool.execute
     )
