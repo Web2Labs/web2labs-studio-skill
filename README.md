@@ -254,6 +254,7 @@ Every video costs **1 API credit** (or 2 for rush priority). Premium features li
 | Bundle | Credits | Price | Per Video |
 |--------|---------|-------|-----------|
 | **Free** | 2 | €0 | €0 |
+| **Micro** | 5 | €9.99 | €2.00 |
 | Casual | 10 | €22.99 | €2.30 |
 | Starter | 20 | €39.99 | €2.00 |
 | Pro | 100 | €199.99 | €2.00 |

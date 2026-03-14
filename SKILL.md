@@ -6,8 +6,36 @@ metadata: {"openclaw":{"emoji":"video","homepage":"https://web2labs.com/openclaw
 
 # Web2Labs Studio
 
-AI-powered video editor for creators. Process recordings into jump-cut videos,
-automatic subtitles, and shorts.
+**Turn recordings into edited YouTube videos + 25 shorts — from your terminal.**
+
+3 commands. 2 free credits. No credit card.
+
+## Quick Start
+
+```bash
+clawhub install @web2labs/studio
+```
+
+```
+"Set up Web2Labs with my email hello@example.com"
+"Edit ~/Desktop/my-recording.mp4 as a youtube video"
+```
+
+**What you get back:**
+- Edited video (jump-cuts, zooms, captions, normalized audio)
+- 25+ vertical shorts (YouTube, TikTok, Instagram, X)
+- Full metadata (title, description, tags, chapters, thumbnails)
+
+**Pricing:** 2 free videos → then ~€2/video with credit bundles. [See pricing](https://web2labs.com/openclaw#pricing)
+
+**Security:**
+- API key stored locally (`~/.openclaw/openclaw.json`) — never sent to third parties
+- URL downloads via local yt-dlp — files never touch third-party servers
+- HTTPS only · HMAC-SHA256 signed webhooks · MIT licensed
+
+---
+
+## Agent Instructions
 
 ## Available Tools
 

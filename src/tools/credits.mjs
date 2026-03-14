@@ -25,7 +25,7 @@ export class CreditsTool {
         message:
           "Heads up: API credits are low. Consider topping up to avoid interrupted uploads.",
         recommendation:
-          purchaseLinks?.apiCredits?.find((bundle) => bundle.id === "starter") ||
+          purchaseLinks?.apiCredits?.find((bundle) => bundle.id === "micro") ||
           purchaseLinks?.apiCredits?.[0] ||
           null,
       })
@@ -102,7 +102,7 @@ export class CreditsTool {
         alerts,
         purchaseLinks,
       },
-      next_steps: NextSteps.forCredits(credits),
+      next_steps: NextSteps.forCredits(credits, purchaseLinks),
     }
   }
 }

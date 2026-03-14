@@ -13,15 +13,15 @@ export class NextSteps {
     }
 
     steps.push({
-      tool: "studio_brand",
-      message:
-        "Set up your brand kit with studio_brand so future videos match your style automatically.",
-    })
-
-    steps.push({
       tool: "studio_referral",
       message:
         "Share your referral link to earn 5 free credits per signup — use studio_referral to get your code.",
+    })
+
+    steps.push({
+      tool: "studio_watch",
+      message:
+        "Automate your workflow — use studio_watch to auto-process new uploads from your channel, or batch-process a folder of recordings.",
     })
 
     return steps
@@ -74,9 +74,28 @@ export class NextSteps {
     return steps
   }
 
-  static forCredits(credits) {
+  static forCredits(credits, purchaseLinks) {
     const steps = []
     const apiCredits = toNum(credits?.apiCredits?.total ?? credits?.total)
+
+    if (apiCredits <= 2) {
+      const microBundle =
+        Array.isArray(purchaseLinks?.apiCredits)
+          ? purchaseLinks.apiCredits.find((b) => b.id === "micro")
+          : null
+
+      if (microBundle) {
+        steps.push({
+          tool: "studio_pricing",
+          message: `You have ${apiCredits} credit${apiCredits === 1 ? "" : "s"} remaining. Get 5 more for €${microBundle.price}: ${microBundle.checkoutUrl}`,
+        })
+      } else {
+        steps.push({
+          tool: "studio_pricing",
+          message: `You have ${apiCredits} credit${apiCredits === 1 ? "" : "s"} remaining. Use studio_pricing to see available credit bundles starting at €9.99.`,
+        })
+      }
+    }
 
     if (apiCredits <= 2 && apiCredits > 0) {
       steps.push({
